@@ -1,10 +1,10 @@
 <?php
 	/*****************
 	*
-	*       file:           getrss.php
-	*	Revision: 	0.1
-	*       authors:        Fabio Elia, Lior Ben-kiki, Evan Cordeiro,
-	*			Thomas Norden, Royce Stubbs, Elmer Rodriguez 
+	*       file:       getrss.php
+	*		Revision:	0.1
+	*       authors:    Fabio Elia, Lior Ben-kiki, Evan Cordeiro,
+	*					Thomas Norden, Royce Stubbs, Elmer Rodriguez 
 	*       license: 	GPL v3 
 	*
 	******************/
