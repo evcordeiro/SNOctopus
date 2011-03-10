@@ -1,5 +1,14 @@
+<<<<<<< HEAD
+This is just a test to get SVN working.. 
+=======
 This is just a test to get SVN working.
 This is just a test to get git working.
+Testing pull, commit -evan
 
+<<<<<<< HEAD
 
 Royce-san: Tested clone, commit, merge, push. 3/4/2011.
+=======
+Royce-san: Tested clone, commit, merge, push. 3/4/2011.
+>>>>>>> 668c9607ad5ff441967e3940d782ad1ea4257728
+>>>>>>> origin/master
