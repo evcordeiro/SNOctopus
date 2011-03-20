@@ -1,7 +1,7 @@
 <?php
 /*****************
 *
-*   file:           filename.php
+*   file:           index.php
 *	Revision: 	0.5
 *   authors:        Fabio Elia, Lior Ben-kiki, Evan Cordeiro,
 *					Thomas Norden, Royce Stubbs, Elmer Rodriguez 
@@ -45,6 +45,7 @@ if ($handle = opendir('./plugins/')) {
 //Print list of possible plugins
 
 echo "<pre>";
+echo "<br><b>Available Plugins:</b><br>";
 print_r($list);
 echo "</pre>";
 
@@ -73,6 +74,8 @@ $count = 0;
 		if(file_exists($service_file)){
 			require_once($service_file);
 			$obj = new $service;
+			
+			echo ("<br><b>Posting to: ". $service . "<br><b>Output:</b><br>");
 			$obj->postToAPI($information);
 		}
 	}

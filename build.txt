@@ -1,0 +1,26 @@
+Build instructions:
+
+1) ftp local files to www.sno.wamunity.com/build/
+2) test build output www.sno.wamunity.com/build/
+3) edit build.txt (this file) with appropriate notes (save last build under history)
+4) add/commit/push local to https://evcordeiro@github.com/evcordeiro/SNOctopus.git 
+
+Additional notes:
+www.sno.wamunity.com/build/ should be identical to the files on the github repository and presumably be fully functional at any given point, with the obvious exception when a component never worked in the first place.
+
+Use www.sno.wamunity.com/build/test directory for testing
+
+Last Build:
+
+3/20/2011 6:00 PM by EC
+Notes:
+File structure on test site modified to contain a /build directory
+Facebook plugin: has basic posting functionality
+Tumblr plugin: broken (sessions/cookie issues?)
+Digg plugin: no files
+Twitter plugin: no files
+GPL license on all relevant files
+Added build instructions and notes (build.txt)
+
+
+Build History:
