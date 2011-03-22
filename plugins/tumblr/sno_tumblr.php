@@ -39,8 +39,8 @@ function postToAPI($information = null){
 	$tumblr->oauth_method('get'); 
 
 	//stuff we will have to store in database for each user
-	$_SESSION['user_id'] = 'norden.tom@gmail.com';
-	$_SESSION['screen_name'] = 'tnorden';
+	$_SESSION['user_id'] = 'norden.***@gmail.com';
+	$_SESSION['screen_name'] = '***rden';
 	$_SESSION['oauth_token'] = '7AWBUeaUFEKK5pbPgOVRZBLtxJ4x1seS8bar1JY83X3pHn6rJj'; 
 	$_SESSION['oauth_token_secret'] = 'C9us5fF3sHmVc8wqOXyt8Uvya4ZIL4rnGg1pceM4jvkD9BHpl2';  
 	$_SESSION['loggedin'] = true;
