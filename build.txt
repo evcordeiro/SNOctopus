@@ -12,6 +12,14 @@ Use www.sno.wamunity.com/build/test directory for testing
 
 Last Build:
 
+3/26/2011 12:54 AM by Lior
+Notes:
+Wamunity appears to be down. Tested files on a different server. 
+Current ui is available on http://snoctop.us, will move to wamunity when available.
+user management platform added (based on usercacke). 
+
+Build History:
+
 3/20/2011 6:00 PM by EC
 Notes:
 File structure on test site modified to contain a /build directory
@@ -21,6 +29,3 @@ Digg plugin: no files
 Twitter plugin: no files
 GPL license on all relevant files
 Added build instructions and notes (build.txt)
-
-
-Build History:
