@@ -12,13 +12,25 @@ Use www.sno.wamunity.com/build/test directory for testing
 
 Last Build:
 
+3/29/2011 4:04PM by EC
+
+Notes:
+This build was ugly.
+Twitter return duplicate posts errors. Fine, but should hide this.
+Tumblr Authentication has periodic errors. Need to determine source.
+Links added to verify output.
+Moved /Magpie to /archive
+added networks.php to /ui and related images to /images
+
+Build History:
+
 3/26/2011 12:54 AM by Lior
 Notes:
 Wamunity appears to be down. Tested files on a different server. 
 Current ui is available on http://snoctop.us, will move to wamunity when available.
 user management platform added (based on usercacke). 
 
-Build History:
+
 
 3/20/2011 6:00 PM by EC
 Notes:
