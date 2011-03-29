@@ -1,11 +1,1 @@
-
-This is just a test to get SVN working.. 
-=======
-This is just a test to get SVN working.
-This is just a test to get git working.
-Testing pull, commit -evan
-
-
-Royce-san: Tested clone, commit, merge, push. 3/4/2011.
-=======
-Royce-san: Tested clone, commit, merge, push. 3/4/2011.
+SNOctopus is a web based interface whose goal is to simplify the task of coordinating the many social networking utilities available to users. With SNOctopus, users can enter a content source such as a blog or anything that generates an XML-based feed (RSS, atom, etc.) and a set of target networks. The data from the content source is automatically propagated to other social networks such as Twitter and Facebook. The user can therefore concentrate exclusively on generating quality content, not resubmitting work to multiple web utilities.
