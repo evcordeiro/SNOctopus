@@ -22,13 +22,13 @@ class facebook{
 		    'picture' => $matches[0][0],
 		    //'source' =>  strip_tags($information['link'])
 		);
-		var_dump($data);	
+		/*var_dump($data);	*/
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
 		$output = curl_exec($ch);
 		$info = curl_getinfo($ch);
 		curl_close($ch);
-		echo "<br>";
-		var_dump($info);
+		//echo $output . "<br>";
+		var_dump($info);		echo "<br>";
 	}
 }
 ?>

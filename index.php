@@ -1,4 +1,5 @@
 <?php
+require_once("functions.php");
 /*****************
 *
 *   file:           index.php
@@ -22,12 +23,27 @@
 *    along with SNOctopus.  If not, see <http://www.gnu.org/licenses/>.
  ******************/
 
-/** Begin ofRSS Retrieval **/ 
-
-$source =  "http://snoctopus.blogspot.com/rss.xml"; 
-$xmlstr = file_get_contents($source);
+/** Begin of RSS Retrieval **/ 
+$feed = "http://www.citizenschools.org/feed/atom/";
+//$feed =  "http://snoctopus.blogspot.com/rss.xml"; 
+$xmlstr = file_get_contents($feed);
 $sitemap = simplexml_load_string($xmlstr);
 
+echo "<pre>";
+echo "<br><b>Available Plugins:</b><br>";
+print_r($sitemap	);
+echo "</pre>";
+
+/** Parse some XML **/
+$source = $sitemap->generator; // Which blog is it? Wordpress? Blogspot? ./?
+
+$tagList = $sitemap->entry[0]->category;
+$tags = array();
+foreach ($tagList as $tag) {
+	$tags[] = $tag["term"];
+}
+
+print_r($sitemap->generator);
 /** End of RSS Retrieval **/ 
 
 
@@ -61,12 +77,15 @@ $count = 0;
 
 //foreach($sitemap->entry as $key => $value){
 	$information['title'] = $sitemap->entry[$count]->title;
-	$information['content'] =  $sitemap->entry[$count]->content;
+	$information['content'] =  stripHTML($sitemap->entry[$count]->content);
 	$information['link'] = $sitemap->entry[$count]->link[4][0][0]['href'];
 	$information['timestamp'] = $sitemap->entry[$count]->published;
 	$information['blogTime'] =  $sitemap->updated;
+	$information['tags'] = $tags;
 	$information['bitlyURL'] = "http://sample.com";
 	$information['bitlyHash'] = "xxxxxxxxxxxx";
+
+
 
 	foreach($list as $service ){
 		// only post to our services with the sno_prefix.
@@ -79,6 +98,13 @@ $count = 0;
 			$obj->postToAPI($information);
 		}
 	}
+	
+	echo ("<a href='http://snoctop.us/index.php'>http://snoctop.us/index.php</a>");
+	echo ("<a href='http://tnorden.tumblr.com/'>http://tnorden.tumblr.com/</a>");
+	echo ("<a href='http://snoctopus.blogspot.com/2011/03/httpsno.html'>http://snoctopus.blogspot.com/2011/03/httpsno.html</a>");
+	echo ("<a href='http://twitter.com/search?q=snoctopus'>http://twitter.com/search?q=snoctopus</a>");
+	echo ("<a href='http://www.facebook.com/pages/SNOctopus/167168166665156?sk=wall'>http://www.facebook.com/pages/SNOctopus/167168166665156?sk=wall</a>");
+
 	//$count++;
 //}
 
