@@ -26,22 +26,40 @@
 
 /*to use 
 $bitly = new Bitly();
+
 $shortUrl = $bitly->shortenUrl('longurl');
+
 $longUrl = $bitly->expandUrl('shorturl');
+
 $clicks = $bitly->('shorturl');  where $clicks['user'] are hash specific clicks and $clicks['global'] are longurl specific clicks
 
+$referrer = $bitly->referrerUrl('shorturl');
+foreach($referrer as $ref){
+	$ref['referrer'];
+	$ref['clicks'];
+}
+
 */
-/*for testing
-echo '<h1>Bitly</h1>';
+/*for testing*/
+
+/*echo '<h1>Bitly</h1>';
 $long = 'http://sno.wamunity.com/build/networks.php';
 $bitly = new Bitly();
 $short = $bitly->shortenUrl($long);
-echo 'shortening: '.$long.'<br>'.$short.'<br>';
+echo '<br>shortening: '.$long.'<br>'.$short.'<br>';
 $expanded = $bitly->expandUrl($short);
-echo 'expanding: '.$short.'<br>'.$expanded.'<br>';
+echo '<br>expanding: '.$short.'<br>'.$expanded.'<br>';
 $clicks = $bitly->clicksUrl($short);
-echo 'user clicks: '.$clicks['user'].' global clicks:'.$clicks['global'];
-*/
+echo '<br>user clicks: '.$clicks['user'].' global clicks:'.$clicks['global'].'<br>';
+$referrer = $bitly->referrerUrl($short);
+echo '<br>referrer: # of clicks';
+echo '<ol>';
+foreach($referrer as $ref){
+	echo'<li>'.$ref['referrer'].': '.$ref['clicks'].'</li>';
+}
+echo '</ol>';*/
+
+
 class Bitly{
 	private $break = "";
 	private $api_version = "";
@@ -61,9 +79,9 @@ function shortenUrl($url) {
 	$shortened_url = "";
 	$encoded_url = urlencode($url);
 	$bitly_url = "http://api.bitly.com/v3/shorten?" . 
+			"longUrl=" . $encoded_url . 
 			"&login=" . $this->login . 
 			"&apiKey=" . $this->apikey.
-			"&longUrl=" . $encoded_url . 
 			"&format=" . $this->format; 
 	$content = file_get_contents($bitly_url);
 
@@ -96,8 +114,13 @@ public function expandUrl($url) {
 }
 public function clicksUrl($url){
 	$hash = $this->parseBitlyUrl($url);
-	$clicks = $this->clicksHash($hash, $url);
+	$clicks = $this->clicksHash($hash);
 	return $clicks;
+}
+public function referrerUrl($url){
+	$hash = $this->parseBitlyUrl($url);
+	$referrer = $this->referrerHash($hash);
+	return $referrer;
 }
 private function parseBitlyUrl($url) {
 	$parsed_url = parse_url($url);
@@ -132,7 +155,6 @@ public function expandUrlHash($hash) {
 }
 public function clicksHash($hash){
 	$clicks = array('user'=>"",'global'=>"");
-	$encoded_url = urlencode($url);
 	$bitly_url = "http://api.bitly.com/v3/clicks?" . 
 			"hash=" . $hash.
 			"&login=" . $this->login . 
@@ -155,6 +177,31 @@ public function clicksHash($hash){
 		exit;
 	}
 	return $clicks;
+}
+public function referrerHash($hash){
+	$referrer = array("","");
+	$bitly_url = "http://api.bitly.com/v3/referrers?" . 
+			"hash=" . $hash.
+			"&login=" . $this->login . 
+			"&apiKey=" . $this->apikey.
+			"&format=" . $this->format; 
+	$content = file_get_contents($bitly_url);
+	try{
+		$content = json_decode($content, true);
+		if($content['status_code']!=200)
+		{
+			echo '<br>ERROR: stauts_code = '.$content['status_code'].'<br>';
+		}else{
+			//print_r($content);			
+			$referrer = $content['data']['referrers'];
+		}
+
+	}catch (Exception $e){
+		echo "Caught exception: " . 
+			$e->getMessage() . $this->break;
+		exit;
+	}
+	return $referrer;	
 }
 }
 ?>
