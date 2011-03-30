@@ -28,6 +28,8 @@
 $bitly = new Bitly();
 $shortUrl = $bitly->shortenUrl('longurl');
 $longUrl = $bitly->expandUrl('shorturl');
+$clicks = $bitly->('shorturl');  where $clicks['user'] are hash specific clicks and $clicks['global'] are longurl specific clicks
+
 */
 /*for testing
 echo '<h1>Bitly</h1>';
@@ -36,9 +38,10 @@ $bitly = new Bitly();
 $short = $bitly->shortenUrl($long);
 echo 'shortening: '.$long.'<br>'.$short.'<br>';
 $expanded = $bitly->expandUrl($short);
-echo 'expanding: '.$short.'<br>'.$expanded;
+echo 'expanding: '.$short.'<br>'.$expanded.'<br>';
+$clicks = $bitly->clicksUrl($short);
+echo 'user clicks: '.$clicks['user'].' global clicks:'.$clicks['global'];
 */
-
 class Bitly{
 	private $break = "";
 	private $api_version = "";
@@ -57,17 +60,21 @@ class Bitly{
 function shortenUrl($url) {
 	$shortened_url = "";
 	$encoded_url = urlencode($url);
-	$bitly_url = "http://api.bit.ly/shorten?" . 
-			"version=" .$this->api_version . 
-			"&format=" . $this->format . 
-			"&longUrl=" . $encoded_url . 
+	$bitly_url = "http://api.bitly.com/v3/shorten?" . 
 			"&login=" . $this->login . 
-			"&apiKey=" . $this->apikey;
-
+			"&apiKey=" . $this->apikey.
+			"&longUrl=" . $encoded_url . 
+			"&format=" . $this->format; 
 	$content = file_get_contents($bitly_url);
 
 	try {
-		$shortened_url = $this->parseContent($content, $url);
+		$content = json_decode($content, true);
+		if($content['status_code']!=200)
+		{
+			echo '<br>ERROR: stauts_code = '.$content['status_code'].'<br>';
+		}else{
+			$shortened_url = $content['data']['url'];
+		}
 
 	}
 	catch (Exception $e) {
@@ -83,27 +90,37 @@ public function expandUrl($url) {
 
 	$hash = $this->parseBitlyUrl($url);
 
-	$expanded_url = $this->expandUrlByHash($hash);
+	$expanded_url = $this->expandUrlHash($hash);
 
 	return $expanded_url;
+}
+public function clicksUrl($url){
+	$hash = $this->parseBitlyUrl($url);
+	$clicks = $this->clicksHash($hash, $url);
+	return $clicks;
 }
 private function parseBitlyUrl($url) {
 	$parsed_url = parse_url($url);
 	return trim($parsed_url['path'], "/");
 }
-public function expandUrlByHash($hash) {
+public function expandUrlHash($hash) {
 	$expanded_url = "";
-	$bitly_url = "http://api.bit.ly/expand?" . 
-			"version=" . $this->api_version . 
-			"&format=" . $this->format . 
-			"&hash=" . $hash . 
+	$bitly_url = "http://api.bitly.com/v3/expand?" . 
+			"hash=" . $hash .
 			"&login=" . $this->login . 
-			"&apiKey=" . $this->apikey;
+			"&apiKey=" . $this->apikey.
+			"&format=" . $this->format; 
 
 	$content = file_get_contents($bitly_url);
 
 	try {
-		$expanded_url = $this->parseContent($content, $hash);
+		$content = json_decode($content, true);
+		if($content['status_code']!=200)
+		{
+			echo '<br>ERROR: stauts_code = '.$content['status_code'].'<br>';
+		}else{
+			$expanded_url = $content['data']['expand'][0]['long_url'];
+		}
 	}
 	catch (Exception $e) {
 		echo "Caught exception: " . 
@@ -113,26 +130,31 @@ public function expandUrlByHash($hash) {
 
 	return $expanded_url;
 }
+public function clicksHash($hash){
+	$clicks = array('user'=>"",'global'=>"");
+	$encoded_url = urlencode($url);
+	$bitly_url = "http://api.bitly.com/v3/clicks?" . 
+			"hash=" . $hash.
+			"&login=" . $this->login . 
+			"&apiKey=" . $this->apikey.
+			"&format=" . $this->format; 
+	$content = file_get_contents($bitly_url);
+	try{
+		$content = json_decode($content, true);
+		if($content['status_code']!=200)
+		{
+			echo '<br>ERROR: stauts_code = '.$content['status_code'].'<br>';
+		}else{
+			$clicks['user'] = $content['data']['clicks'][0]['user_clicks'];
+			$clicks['global'] = $content['data']['clicks'][0]['global_clicks'];
+		}
 
-function parseContent($content, $key) {
-	$content = json_decode($content, true);
-
-	if ($content['errorCode'] != 0 || 
-	    $content['statusCode'] != "OK") {
-		throw new Exception($content['statusCode'] . ": " . 
-				$content['errorCode'] . " " . 
-				$content['errorMessage']);
+	}catch (Exception $e){
+		echo "Caught exception: " . 
+			$e->getMessage() . $this->break;
+		exit;
 	}
-
-	if (isset($content['results'][$key]['longUrl'])) {
-		return $content['results'][$key]['longUrl'];
-	}
-	else if (isset($content['results'][$key]['shortUrl'])) {
-		return $content['results'][$key]['shortUrl'];
-	}
-	else {
-		throw new Exception("ERROR. URL not found: " . $key);
-	}
+	return $clicks;
 }
 }
 ?>
