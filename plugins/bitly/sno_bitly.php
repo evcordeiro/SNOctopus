@@ -24,34 +24,50 @@
 */
 
 
-//to use $shortUrl = shortenUrl('longurl');
-
+/*to use 
+$bitly = new Bitly();
+$shortUrl = $bitly->shortenUrl('longurl');
+$longUrl = $bitly->expandUrl('shorturl');
+*/
 /*for testing
 echo '<h1>Bitly</h1>';
 $long = 'http://sno.wamunity.com/build/networks.php';
-$short = shortenUrl($long);
-echo $long.'<br>'.$short;
+$bitly = new Bitly();
+$short = $bitly->shortenUrl($long);
+echo 'shortening: '.$long.'<br>'.$short.'<br>';
+$expanded = $bitly->expandUrl($short);
+echo 'expanding: '.$short.'<br>'.$expanded;
 */
 
+class Bitly{
+	private $break = "";
+	private $api_version = "";
+	private $format = "";
+	private $login = "";
+	private $apikey = "";	
+
+	public function __construct() {
+	$this->break = "\n";
+	$this->api_version = "2.0.1";
+	$this->format = "json";
+	$this->login = 'tnorden';
+	$this->apikey = 'R_e657b61f3df1c998041e07828de7d410';	
+	}
+
 function shortenUrl($url) {
-	$break = "\n";
-	$api_version = "2.0.1";
-	$format = "json";
-	$login = 'tnorden';
-	$apikey = 'R_e657b61f3df1c998041e07828de7d410';	
 	$shortened_url = "";
 	$encoded_url = urlencode($url);
 	$bitly_url = "http://api.bit.ly/shorten?" . 
-			"version=" .$api_version . 
-			"&format=" . $format . 
+			"version=" .$this->api_version . 
+			"&format=" . $this->format . 
 			"&longUrl=" . $encoded_url . 
-			"&login=" . $login . 
-			"&apiKey=" . $apikey;
+			"&login=" . $this->login . 
+			"&apiKey=" . $this->apikey;
 
 	$content = file_get_contents($bitly_url);
 
 	try {
-		$shortened_url = parseContent($content, $url);
+		$shortened_url = $this->parseContent($content, $url);
 
 	}
 	catch (Exception $e) {
@@ -62,6 +78,42 @@ function shortenUrl($url) {
 
 	return $shortened_url;
 }
+public function expandUrl($url) {
+	$expanded_url = "";
+
+	$hash = $this->parseBitlyUrl($url);
+
+	$expanded_url = $this->expandUrlByHash($hash);
+
+	return $expanded_url;
+}
+private function parseBitlyUrl($url) {
+	$parsed_url = parse_url($url);
+	return trim($parsed_url['path'], "/");
+}
+public function expandUrlByHash($hash) {
+	$expanded_url = "";
+	$bitly_url = "http://api.bit.ly/expand?" . 
+			"version=" . $this->api_version . 
+			"&format=" . $this->format . 
+			"&hash=" . $hash . 
+			"&login=" . $this->login . 
+			"&apiKey=" . $this->apikey;
+
+	$content = file_get_contents($bitly_url);
+
+	try {
+		$expanded_url = $this->parseContent($content, $hash);
+	}
+	catch (Exception $e) {
+		echo "Caught exception: " . 
+			$e->getMessage() . $this->break;
+		exit;
+	}
+
+	return $expanded_url;
+}
+
 function parseContent($content, $key) {
 	$content = json_decode($content, true);
 
@@ -82,5 +134,5 @@ function parseContent($content, $key) {
 		throw new Exception("ERROR. URL not found: " . $key);
 	}
 }
-
+}
 ?>
