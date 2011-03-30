@@ -1,0 +1,8 @@
+[29-Mar-2011 23:20:01] PHP Fatal error:  Call to undefined function  shortenurl() in /home/waterto/public_html/sno/build/plugins/bitly/sno_bitly.php on line 5
+[29-Mar-2011 23:20:56] PHP Fatal error:  Call to undefined method Bitly::parseContent() in /home/waterto/public_html/sno/build/plugins/bitly/sno_bitly.php on line 38
+[29-Mar-2011 23:27:06] PHP Parse error:  syntax error, unexpected T_OBJECT_OPERATOR in /home/waterto/public_html/sno/build/plugins/bitly/sno_bitly.php on line 4
+[29-Mar-2011 23:29:16] PHP Parse error:  syntax error, unexpected T_PUBLIC in /home/waterto/public_html/sno/build/plugins/bitly/sno_bitly.php on line 9
+[29-Mar-2011 23:29:58] PHP Fatal error:  Using $this when not in object context in /home/waterto/public_html/sno/build/plugins/bitly/sno_bitly.php on line 18
+[29-Mar-2011 23:31:34] PHP Fatal error:  Using $this when not in object context in /home/waterto/public_html/sno/build/plugins/bitly/sno_bitly.php on line 27
+[29-Mar-2011 23:31:35] PHP Fatal error:  Using $this when not in object context in /home/waterto/public_html/sno/build/plugins/bitly/sno_bitly.php on line 27
+[29-Mar-2011 23:32:13] PHP Fatal error:  Function name must be a string in /home/waterto/public_html/sno/build/plugins/bitly/sno_bitly.php on line 27
