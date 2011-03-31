@@ -41,8 +41,8 @@ foreach($referrer as $ref){
 
 */
 /*for testing*/
-
-/*echo '<h1>Bitly</h1>';
+/*
+echo '<h1>Bitly</h1>';
 $long = 'http://sno.wamunity.com/build/networks.php';
 $bitly = new Bitly();
 $short = $bitly->shortenUrl($long);
@@ -57,8 +57,8 @@ echo '<ol>';
 foreach($referrer as $ref){
 	echo'<li>'.$ref['referrer'].': '.$ref['clicks'].'</li>';
 }
-echo '</ol>';*/
-
+echo '</ol>';
+*/
 
 class Bitly{
 	private $break = "";

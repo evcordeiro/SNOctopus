@@ -25,35 +25,53 @@
 */
 
 
+/*require '../../bitly/sno_bitly.php';
+
+require 'class-xhttp-php/class.xhttp.php';
+
+$info = array();
+$info['user_id']= 'norden.tom@gmail.com';
+$info['screen_name']= 'tnorden';
+$info['oauth_token']= '267829590-38kCQPSk9LWsAj7aEMpEi5ifDtBtxWHHIsFLgsKU';
+$info['oauth_token_secret']= 'nJdUtTY6nGjW76rMNgWNmZxDbDabQ8jupO4gKJUJsig';
+$info['title']= '*TITLE*';
+$info['link']= 'http://www.nor-dev.com';//'http://sno.wamunity.com/test/ui';
+$info['content']= '*CONTENT*';
+echo '<h1>twitter Test</h1>';
+$twitter = new twitter;
+$twitter->postToAPI($info);*/
+
 class twitter{
 
-function postToAPI($information = null){
-	/*require 'class-xhttp-php/class.xhttp.php';*/
+function postToAPI($information){
 	$consumer_key='87l3QJ3z5UYrGEI6njrekA';
 	$consumer_secret_key='2wiFiQ79tjTBPVHC6mo6dDtIUhfPQDdfPYZTFOGg';
 
 	echo "posting...";
-
-	session_name('snoOAuthTwitter');
-	//session_start();
 
 	xhttp::load('profile,oauth');
 	$tumblr = new xhttp_profile();
 	$tumblr->oauth($consumer_key, $consumer_secret_key);
 	$tumblr->oauth_method('get'); 
 
-	//stuff we will have to store in database for each user
-	$_SESSION['user_id'] = 'norden.tom@gmail.com';
-	$_SESSION['screen_name'] = 'tom_norden';
-	$_SESSION['oauth_token'] = '267829590-38kCQPSk9LWsAj7aEMpEi5ifDtBtxWHHIsFLgsKU'; 
-	$_SESSION['oauth_token_secret'] = 'nJdUtTY6nGjW76rMNgWNmZxDbDabQ8jupO4gKJUJsig';  
-	$_SESSION['loggedin'] = true;
-	$tumblr->set_token($_SESSION['oauth_token'], $_SESSION['oauth_token_secret']);
+	if(!$information['oauth_token'])
+	{
+		$information['oauth_token']= '267829590-38kCQPSk9LWsAj7aEMpEi5ifDtBtxWHHIsFLgsKU';
+		$information['oauth_token_secret']= 'nJdUtTY6nGjW76rMNgWNmZxDbDabQ8jupO4gKJUJsig';
+
+	}
+
+	$tumblr->set_token($information['oauth_token'], $information['oauth_token_secret']);
 
 	//data that makes up the post
 	
 	$data = array();
-	$data['post']['status'] = $information['title'].' '.$information['link'];
+	//if there is no link post title
+	if($information['bitlyURL']){
+		$data['post']['status'] = $information['bitlyURL'];
+	}else{
+		$data['post']['status'] = $information['title'];
+	}
 	//post the datat to Twitter
 	$response = $tumblr->fetch('http://api.twitter.com/1/statuses/update.json', $data);
  
@@ -64,9 +82,7 @@ function postToAPI($information = null){
 	} 
 	else 
 	{
-		echo "Update failed.<br>";
-		var_dump($response);
-		/*{echo("cannot post duplicate status")};*/
+		echo "Cannot duplicate post.<br>";
 	}
 	return response;
 
