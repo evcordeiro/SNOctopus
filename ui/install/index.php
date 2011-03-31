@@ -58,7 +58,7 @@ a {
 	
 	if(returns_result("SELECT * FROM ".$db_table_prefix."Groups LIMIT 1") > 0)
 	{
-		echo "<strong>UserCake has already been installed.<br /> Please remove / rename the install directory.</strong>";	
+		echo "<strong>SNOctopus has already been installed.<br /> Please remove / rename the install directory.</strong>";	
 	}
 	else
 	{
