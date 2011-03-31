@@ -24,8 +24,15 @@ require_once("functions.php");
  ******************/
 
 /** Begin of RSS Retrieval **/ 
-$feed = "http://www.citizenschools.org/feed/atom/";
-//$feed =  "http://snoctopus.blogspot.com/rss.xml"; 
+$feed1 = "http://www.citizenschools.org/feed/atom/";
+$feed2 =  "http://snoctopus.blogspot.com/rss.xml"; 
+
+parseFeed($feed1);
+parseFeed($feed2);
+
+function parseFeed($feed)
+{
+
 $xmlstr = file_get_contents($feed);
 $sitemap = simplexml_load_string($xmlstr);
 
@@ -43,7 +50,7 @@ foreach ($tagList as $tag) {
 	$tags[] = $tag["term"];
 }
 
-print_r($sitemap->generator);
+//print_r($sitemap->generator);
 /** End of RSS Retrieval **/ 
 
 
@@ -99,12 +106,12 @@ $count = 0;
 		}
 	}
 	
-	echo ("<a href='http://snoctop.us/index.php'>http://snoctop.us/index.php</a>");
-	echo ("<a href='http://tnorden.tumblr.com/'>http://tnorden.tumblr.com/</a>");
-	echo ("<a href='http://snoctopus.blogspot.com/2011/03/httpsno.html'>http://snoctopus.blogspot.com/2011/03/httpsno.html</a>");
-	echo ("<a href='http://twitter.com/search?q=snoctopus'>http://twitter.com/search?q=snoctopus</a>");
-	echo ("<a href='http://www.facebook.com/pages/SNOctopus/167168166665156?sk=wall'>http://www.facebook.com/pages/SNOctopus/167168166665156?sk=wall</a>");
-
+	echo ("<a href='http://snoctop.us/index.php'>http://snoctop.us/index.php</a><br>");
+	echo ("<a href='http://tnorden.tumblr.com/'>http://tnorden.tumblr.com/</a><br>");
+	echo ("<a href='http://snoctopus.blogspot.com/2011/03/httpsno.html'>http://snoctopus.blogspot.com/2011/03/httpsno.html</a><br>");
+	echo ("<a href='http://twitter.com/search?q=snoctopus'>http://twitter.com/tom_norden</a><br>");
+	echo ("<a href='http://www.facebook.com/pages/SNOctopus/167168166665156?sk=wall'>http://www.facebook.com/pages/SNOctopus/167168166665156?sk=wall</a><br>");
+}
 	//$count++;
 //}
 
