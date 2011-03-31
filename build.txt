@@ -1,9 +1,12 @@
 Build instructions:
 
 1) ftp local files to www.sno.wamunity.com/build/
-2) test build output www.sno.wamunity.com/build/
-3) edit build.txt (this file) with appropriate notes (save last build under history)
-4) add/commit/push local to https://evcordeiro@github.com/evcordeiro/SNOctopus.git 
+2) Create a new mysql database to be used by this program 
+3) Edit /ui/settings.php and add mysql credentials
+4) go to /ui/ on a browser for installation process. 
+5) test build output www.sno.wamunity.com/build/
+6) edit build.txt (this file) with appropriate notes (save last build under history)
+7) add/commit/push local to https://evcordeiro@github.com/evcordeiro/SNOctopus.git 
 
 Additional notes:
 www.sno.wamunity.com/build/ should be identical to the files on the github repository and presumably be fully functional at any given point, with the obvious exception when a component never worked in the first place.
@@ -12,8 +15,17 @@ Use www.sno.wamunity.com/build/test directory for testing
 
 Last Build:
 
-3/29/2011 4:04PM by EC
+3/31/2011 1:30AM by Lior
 
+Notes:
+Build in one step added. 
+installation file added, allowing the project to be ported.
+/ui/install/index.php
+
+
+Build History:
+
+3/29/2011 4:04PM by EC
 Notes:
 This build was ugly.
 Twitter return duplicate posts errors. Fine, but should hide this.
@@ -21,8 +33,6 @@ Tumblr Authentication has periodic errors. Need to determine source.
 Links added to verify output.
 Moved /Magpie to /archive
 added networks.php to /ui and related images to /images
-
-Build History:
 
 3/26/2011 12:54 AM by Lior
 Notes:
