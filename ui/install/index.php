@@ -1,6 +1,6 @@
 <html>
 <head>
-<title>UserCake - Database Setup</title>
+<title>SNOCtopus - Database Setup</title>
 <style type="text/css">
 <!--
 html, body {
@@ -22,6 +22,7 @@ a {
 <p><img src="side.png"></p>
 <?php
 	/*
+		Based on user management system: 
 		UserCake Version: 1.4
 		http://usercake.com
 		
@@ -96,6 +97,47 @@ a {
 					 PRIMARY KEY  (`User_ID`)
 					) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 				";
+
+				//SNOCTO Addition starts here:
+				$user_feeds_sql = "
+					CREATE TABLE IF NOT EXISTS `".$db_table_prefix."User_feeds` (
+					`id` int(11) NOT NULL auto_increment,
+  					`user_id` int(11) NOT NULL,
+  					`feed_id` int(11) NOT NULL,
+  					`joined` timestamp NOT NULL default CURRENT_TIMESTAMP,
+  					PRIMARY KEY `id` (`id`)
+					) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+				";
+
+				$sn_sql = "
+					CREATE TABLE IF NOT EXISTS `".$db_table_prefix."sn` (
+  					`id` int(11) NOT NULL auto_increment,
+  					`user_id` int(11) NOT NULL,
+  					`type` varchar(50) NOT NULL,
+  					`api_key` varchar(150) default NULL,
+  					`api_secret` varchar(150) default NULL,
+  					`api_screen_name` varchar(150) default NULL,
+  					`api_user_id` varchar(150) default NULL,
+  					`active` tinyint(1) NOT NULL COMMENT 'boolean',
+  					`last_post` timestamp NOT NULL default '0000-00-00 00:00:00',
+  					`joined` timestamp NOT NULL default CURRENT_TIMESTAMP,
+  					PRIMARY KEY (`id`)
+					) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+				";
+
+				$feeds_sql = "
+					CREATE TABLE IF NOT EXISTS `".$db_table_prefix."feeds` (
+  					`id` int(11) NOT NULL auto_increment,
+  					`feed` varchar(200) NOT NULL,
+  					`rank` int(11) NOT NULL,
+  					`post_count` int(11) NOT NULL,
+  					`active` tinyint(1) NOT NULL,
+  					`last_poll` timestamp NOT NULL default '0000-00-00 00:00:00',
+  					`last_post` timestamp NOT NULL default '0000-00-00 00:00:00',
+  					`joined` timestamp NOT NULL default CURRENT_TIMESTAMP,
+  					PRIMARY KEY (`id`)
+					) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+				";
 				
 				
 				if($db->sql_query($groups_sql))
@@ -133,7 +175,43 @@ a {
 					echo print_r($db->_sql_error());
 					$db_issue = true;
 				}
-				
+
+				//SNOCTO Addition 
+				if($db->sql_query($user_feeds_sql))
+				{
+					echo "<p>".$db_table_prefix."User_feeds table created.....</p>";
+				}
+				else
+				{
+					echo "<p>Error constructing user_feeds table.</p><br /><br /> DBMS said: ";
+					
+					echo print_r($db->_sql_error());
+					$db_issue = true;
+				}
+
+				if($db->sql_query($feeds_sql))
+				{
+					echo "<p>".$db_table_prefix."feeds table created.....</p>";
+				}
+				else
+				{
+					echo "<p>Error constructing feeds table.</p><br /><br /> DBMS said: ";
+					
+					echo print_r($db->_sql_error());
+					$db_issue = true;
+				}
+
+				if($db->sql_query($sn_sql))
+				{
+					echo "<p>".$db_table_prefix."sn table created.....</p>";
+				}
+				else
+				{
+					echo "<p>Error constructing sn table.</p><br /><br /> DBMS said: ";
+					
+					echo print_r($db->_sql_error());
+					$db_issue = true;
+				}
 				
 				if(!$db_issue)
 				echo "<p><strong>Database setup complete, please delete the install folder.</strong></p>";
@@ -146,7 +224,7 @@ a {
 		else
 		{
 	?>
-			<a href="?install=true">Install UserCake</a>
+			<a href="?install=true">Install SNOctopus</a>
 	
 	
 	<?php } } }
