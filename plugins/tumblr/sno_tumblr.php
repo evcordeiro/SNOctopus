@@ -61,9 +61,23 @@ function postToAPI($information = null){
 	$data['post'] = array(
 	'type' => 'regular',
 	'title' => $information['title'],
-	'body' => $information['content'],
+	'body' => preg_replace("/[^a-zA-Z0-9\s]/", "", strip_tags(stripHTML($information['content'])))
+	//'body' => html_entity_decode( strip_tags(stripHTML($information['content'])))
 	);
 
+	//echo "unmod content:<br>";
+	//echo "<pre>" . $information['content'] . "</pre>";
+	//echo "<br><br>striptags htmlentititydecode<br><br>";
+	
+	//$cont = htmlentities($information['content'], ENT_QUOTES | ENT_IGNORE );
+	//echo $cont;
+	//echo (strip_tags(html_entity_decode($cont, ENT_QUOTES)));
+	/*
+	echo (strip_tags(html_entity_decode($information['content'], ENT_NOQUOTES, 'ISO-8859-1')));
+	echo (strip_tags(html_entity_decode($information['content'], ENT_QUOTES, 'ISO-8859-15')));
+	echo (strip_tags(html_entity_decode($information['content'], ENT_COMPAT, 'UTF-8')));
+	*/
+	
 	//post the datat to Tumblr
 	$response = $tumblr->fetch('http://www.tumblr.com/api/write', $data);
  

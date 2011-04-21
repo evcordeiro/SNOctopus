@@ -1,5 +1,5 @@
 <?php
-require_once("functions.php");
+require_once("lib/functions.php");
 require_once("bitly/sno_bitly.php");
 /*****************
 *
@@ -71,41 +71,23 @@ while($query = mysql_fetch_array( $result )){
 	parseFeed($query);
 }
 
-/** End Database **/
-
-
-/** Begin of RSS Retrieval **/ 
-/*
-$feed1 = "http://www.citizenschools.org/feed/atom/";
-$feed2 =  "http://snoctopus.blogspot.com/rss.xml"; 
-
-parseFeed($feed1);
-parseFeed($feed2);
-*/
-
-
+/** End Database **/
 function parseFeed($query){
 
 
 	$xmlstr = file_get_contents($query['urlid']);
-	$sitemap = simplexml_load_string($xmlstr);
-
+	$sitemap = simplexml_load_string($xmlstr);//echo "<br><br>sitemap<br>";	//var_dump($sitemap);	
 	/** Parse some XML **/
-	$source = $sitemap->generator; // Which blog is it? Wordpress? Blogspot? ./?
-
+	$source = $sitemap->generator; // Which blog is it? Wordpress? Blogspot? ./?	echo $source;	
 	$tagList = $sitemap->entry[0]->category;
 	$tags = array();
 	foreach ($tagList as $tag) {
 		$tags[] = $tag["term"];
 	}
-
-
-
 /** End of RSS Retrieval **/ 
 
 /** Begin Commit to Plugins **/ 
-
-
+
 	// ATM this will only retrieve the last post. It will not check if we have already retrieved it.
 	// The commented for loop will allow to get all the posts. We could then parse it for the newest ones.
 	$count = 0;
@@ -116,7 +98,7 @@ function parseFeed($query){
 			$information['bitlyURL']=$bitly->shortenUrl($sitemap->entry[$count]->link['href']);
 		}
 		$information['title'] = $sitemap->entry[$count]->title;
-		$information['content'] =  preg_replace("/[^a-zA-Z0-9\s]/", "", strip_tags(stripHTML($sitemap->entry[$count]->content)));
+		$information['content'] =  $sitemap->entry[$count]->content; 		//echo ($sitemap->entry[$count]->content);		
 		$information['link'] = $sitemap->entry[$count]->link['href'];
 		$information['timestamp'] = $sitemap->entry[$count]->published;
 		$information['blogTime'] =  $sitemap->updated;

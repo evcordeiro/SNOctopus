@@ -8,20 +8,19 @@ $authorizeURL    = 'https://api.twitter.com/oauth/authorize';
 $accessTokenURL  = 'https://api.twitter.com/oauth/access_token';
 
 require 'class-xhttp-php/class.xhttp.php'; 
-session_name('twitteroauth');
+session_name('snocto_go');
 session_start();
+
+$_SESSION['networkID'] = 'twitter';
+$_SESSION['success'] = false;
 
 xhttp::load('profile,oauth');
 $tumblr = new xhttp_profile();
 $tumblr->oauth($consumer_token, $consumer_secret);
 $tumblr->oauth_method('get'); 
-if(isset($_GET['logout'])) {
-    $_SESSION = array();
-    session_destroy();
-    echo 'You were logged out.<br><br>';
-}
 
-if(isset($_GET['signin']) and !$_SESSION['loggedin']) {
+
+if(isset($_GET['signin']) and !$_SESSION['twitter_loggedin']) {
 
    $data = array();
     $data['post']['oauth_callback'] = $callbackURL;
@@ -31,16 +30,20 @@ if(isset($_GET['signin']) and !$_SESSION['loggedin']) {
         $var = xhttp::toQueryArray($response['body']);
         $_SESSION['oauth_token']        = $var['oauth_token'];
         $_SESSION['oauth_token_secret'] = $var['oauth_token_secret'];
-
-       header('Location: '.$authorizeURL.'?oauth_token='.$_SESSION['oauth_token'], true, 303);
+		
+		$_SESSION['twitter_loggedin'] = true; /* Handles user denies -- But Twitter doesn't return on user denies */
+		
+		header('Location: '.$authorizeURL.'?oauth_token='.$_SESSION['oauth_token'], true, 303);
         die();
 
     } else {
-        echo 'Could not get token.<br><br>';
+        
+        $_SESSION['error_code'] = $response['body'];
+		echo("<script> top.location.href='http://www.sno.wamunity.com/build/ui/networks.php'</script>");
     }
 }
 
-if($_GET['oauth_token'] == $_SESSION['oauth_token'] and $_GET['oauth_verifier'] and !$_SESSION['loggedin']) {
+if($_GET['oauth_token'] == $_SESSION['oauth_token'] and $_GET['oauth_verifier'] and !$_SESSION['twitter_loggedin']) {
 
    $data = array();
     $data['post']['oauth_verifier'] = $_GET['oauth_verifier'];
@@ -54,22 +57,23 @@ if($_GET['oauth_token'] == $_SESSION['oauth_token'] and $_GET['oauth_verifier'] 
 
         $_SESSION['oauth_token'] = $var['oauth_token'];
         $_SESSION['oauth_token_secret'] = $var['oauth_token_secret'];
-        $_SESSION['loggedin'] = true;
+        $_SESSION['twitter_loggedin'] = true;
+		$_SESSION['networkID'] = 'twitter';
+		$_SESSION['success'] = true;
 
     } else {
-        echo 'Unable to sign you in with Twitter. Please try again later.<br><br>';
-        echo $response['body'];
+        $_SESSION['error_code'] = $response['body'];
+		echo("<script> top.location.href='http://www.sno.wamunity.com/build/ui/networks.php'</script>");
     }
 }
 
-if($_SESSION['loggedin']) { ?>
+if($_SESSION['twitter_loggedin']) { 
+echo("<script> top.location.href='http://www.sno.wamunity.com/build/ui/networks.php'</script>");
+} 
 
-<strong>oauth_token</strong>: <?php echo $_SESSION['oauth_token']; ?><br />
-<strong>oauth_token_secret</strong>: <?php echo $_SESSION['oauth_token_secret']; ?><br /><br />
-<a href="?logout">Log out</a>
-
-
-<?php } else {
+else 
+{
+echo("<script> top.location.href='?signin'</script>");
+} 
 ?>
-<a href="?signin">Sign in with Twitter</a>
-<?php } ?>
+
