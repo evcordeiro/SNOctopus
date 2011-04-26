@@ -120,8 +120,7 @@ class sno_db_interface
         $resultArray = $pdoStatement->fetch();
 
         if ($resultArray != null) {
-            $creds = unserialize($resultArray[0]);
-            return $creds;
+            return unserialize(base64_decode($resultArray[0]));
         } else {
             return null;
         }
@@ -138,8 +137,8 @@ class sno_db_interface
      */
     public static function updateCredentials($credentialArray, $networkId)
     {
-        $pdoStatement = executePreparedQuery("update 'networks' set 'networks'.'credentials'='"
-                                             . serialize($credentialArray) 
+        $pdoStatement = self::executePreparedQuery("update 'networks' set 'networks'.'credentials'='"
+                                             . serialize(base64_encode($credentialArray)) 
                                              . "' where 'network_id'='?'", array($networkId));
         if ($pdoStatement->rowCount() != 1) {
             echo 'Error setting credentials in sno_db_interface\n';
@@ -159,7 +158,7 @@ class sno_db_interface
      */
     public static function isServiceActive($networkId)
     {
-        $pdoStatement = executePreparedQuery("select 'active_status' from 'networks' where 'network_id'='?'",
+        $pdoStatement = self::executePreparedQuery("select 'active_status' from 'networks' where 'network_id'='?'",
                                              array($networkId));
         $resultArray = $pdoStatement->fetch();
                 
@@ -174,13 +173,15 @@ class sno_db_interface
     /**
      *  Insert a new social network for a user
      *
+     *  
      */
     public static function setNewNetwork($userId, $networkName, $nickname, $credentialArray, $activeState = 1)
     {
-        $pdoStatement = executePreparedQuery("insert into 'networks' "
+	$enCred = serialize(base64_encode($credentialArray));
+        $pdoStatement = self::executePreparedQuery("insert into 'networks' "
                                              . "('user_id, 'network_name', 'network_label', 'active_state') "
                                              . "values ('?', '?', '?', '?', '?')", 
-                                             array($userId, $networkName, $nickname, $credentialArray, $activeState));
+                                             array($userId, $networkName, $nickname, $enCred, $activeState));
     }
 
     /**
@@ -189,7 +190,7 @@ class sno_db_interface
      */
     public static function setNewFeedMap($feedUrl, $networkId, $activeState = 1)
     {
-        $pdoStatement = executePreparedQuery("insert into 'maps' "
+        $pdoStatement = self::executePreparedQuery("insert into 'maps' "
                                              . "('feed_url', 'network_id', 'active_state') "
                                              . "values ('?', '?', '?')",
                                              array($feedUrl, $networkId, $activeState));
@@ -202,7 +203,7 @@ class sno_db_interface
      */
     public static function setNewPost($feedUrl, $networkId, $publishDateTime, $bitlyUrl)
     {
-        $pdoStatement = executePreparedQuery("insert into 'posts' "
+        $pdoStatement = self::executePreparedQuery("insert into 'posts' "
                                              . "('feed_url', 'network_id', 'publish_date', 'bitly_link') "
                                              . "values ('?', '?', '?', '?')",
                                              array($feedUrl, $networkId, $publishDateTime, $bitlyUrl));
