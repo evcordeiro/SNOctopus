@@ -138,7 +138,7 @@ class sno_db_interface
     public static function updateCredentials($credentialArray, $networkId)
     {
         $pdoStatement = self::executePreparedQuery("update 'networks' set 'networks'.'credentials'='"
-                                             . serialize(base64_encode($credentialArray)) 
+                                             . base64_encode(serialize($credentialArray)) 
                                              . "' where 'network_id'='?'", array($networkId));
         if ($pdoStatement->rowCount() != 1) {
             echo 'Error setting credentials in sno_db_interface\n';
@@ -177,7 +177,7 @@ class sno_db_interface
      */
     public static function setNewNetwork($userId, $networkName, $nickname, $credentialArray, $activeState = 1)
     {
-	$enCred = serialize(base64_encode($credentialArray));
+	$enCred = base64_encode(serialize($credentialArray));
         $pdoStatement = self::executePreparedQuery("insert into 'networks' "
                                              . "('user_id, 'network_name', 'network_label', 'active_state') "
                                              . "values ('?', '?', '?', '?', '?')", 
