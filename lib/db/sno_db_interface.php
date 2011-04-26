@@ -48,13 +48,20 @@ class sno_db_interface
         try {
             $dbConn = self::newDbConnection();
             $stmt = $dbConn->prepare($queryString);
-            $pdoStatement = $stmt->execute($paramArray);
         } catch (PDOException $e) {
-            echo 'Error in query execution: ' . $e->getMessage();
+            echo 'Error in query preparation: ' . $e->getMessage();
             return null;
         }
-        $dbConn = null; // Kill DB connection
-        return $pdoStatement;
+
+	if ($pdoStatement = $stmt->execute($paramArray)) {
+	   $dbConn = null; // Kill DB connection
+	   return $pdoStatement;
+	}
+	else {
+	     echo 'Error on query execution\n';
+	     return null;
+	}
+	
     }
 
     /**
