@@ -56,9 +56,12 @@ class sno_db_interface
 	if ($stmt->execute($paramArray)) {
 	   $dbConn = null; // Kill DB connection
 	   return $stmt;
-	}
-	else {
-	     echo 'Error on query execution\n';
+	} else {
+	     echo 'Error on query execution: ';
+	     echo '<pre>';
+	     print_r($stmt->errorInfo());
+	     print_r($paramArray);
+	     echo '</pre>';
 	     $dbConn = null;
 	     return null;
 	}
@@ -186,10 +189,10 @@ class sno_db_interface
     public static function setNewNetwork($userId, $networkName, $nickname, $credentialArray, $activeState = 1)
     {
 	$enCred = base64_encode(serialize($credentialArray));
-        $pdoStatement = self::executePreparedQuery("insert into 'networks' "
-                                             . "('user_id, 'network_name', 'network_label', 'active_state') "
-                                             . "values ('?', '?', '?', '?', '?')", 
-                                             array($userId, $networkName, $nickname, $enCred, $activeState));
+        $pdoStatement = self::executePreparedQuery("insert into networks "
+                                             . "(user_id, network_name, network_label, credentials, active_state) "
+                                             . "values (?, ?, ?, ?, ?)", 
+                                             array($userId, $networkName, $nickname, $enCred, $activeState));                                 
     }
 
     /**
@@ -199,8 +202,8 @@ class sno_db_interface
     public static function setNewFeedMap($feedUrl, $networkId, $activeState = 1)
     {
         $pdoStatement = self::executePreparedQuery("insert into 'maps' "
-                                             . "('feed_url', 'network_id', 'active_state') "
-                                             . "values ('?', '?', '?')",
+                                             . "(feed_url, network_id,bactive_state) "
+                                             . "values (?, ?, ?)",
                                              array($feedUrl, $networkId, $activeState));
     }
 
@@ -212,8 +215,8 @@ class sno_db_interface
     public static function setNewPost($feedUrl, $networkId, $publishDateTime, $bitlyUrl)
     {
         $pdoStatement = self::executePreparedQuery("insert into 'posts' "
-                                             . "('feed_url', 'network_id', 'publish_date', 'bitly_link') "
-                                             . "values ('?', '?', '?', '?')",
+                                             . "(feed_url, network_id, publish_date, bitly_link) "
+                                             . "values (?, ?, ?, ?)",
                                              array($feedUrl, $networkId, $publishDateTime, $bitlyUrl));
     }
 
