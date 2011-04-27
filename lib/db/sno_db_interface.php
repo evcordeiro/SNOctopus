@@ -53,12 +53,13 @@ class sno_db_interface
             return null;
         }
 
-	if ($pdoStatement = $stmt->execute($paramArray)) {
+	if ($stmt->execute($paramArray)) {
 	   $dbConn = null; // Kill DB connection
-	   return $pdoStatement;
+	   return $stmt;
 	}
 	else {
 	     echo 'Error on query execution\n';
+	     $dbConn = null;
 	     return null;
 	}
 	
