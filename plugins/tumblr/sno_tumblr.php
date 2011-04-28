@@ -25,43 +25,37 @@
 */
 
 
+require_once('config.php');
+require_once('../../lib/functions.php');
 require 'class-xhttp-php/class.xhttp.php';
-/*$info = array();
-$info['oauth_token']= '7AWBUeaUFEKK5pbPgOVRZBLtxJ4x1seS8bar1JY83X3pHn6rJj';
-$info['oauth_token_secret']= 'C9us5fF3sHmVc8wqOXyt8Uvya4ZIL4rnGg1pceM4jvkD9BHpl2';
-$info['title']= '*TITLE*';
-$info['link']= 'http://www.nor-dev.com';//'http://sno.wamunity.com/test/ui';
-$info['content']= '*CONTENT*';
-echo '<h1>tumblr Test</h1>';
-$tumblr = new tumblr;
-$tumblr->postToAPI($info);*/
 
 class tumblr{
 
-function postToAPI($information = null){
-	$consumer_key='nTu0OIggfxbJXuJ1NShuB2Mr2ce7WBjXkM74rhTVRoWXCryEQ5';
-	$consumer_secret_key='QFsyJxnri7elEOzpzzR5dmtndQfGLYDb1FSMPkzVR5f1nkCGGE';
+function postToAPI($feed_data = NULL, $credentials = NULL){
+
 	xhttp::load('profile,oauth');
 	$tumblr = new xhttp_profile();
-	$tumblr->oauth($consumer_key, $consumer_secret_key);
+	$tumblr->oauth(CONSUMER_KEY, CONSUMER_KEY_SECRET);
 	$tumblr->oauth_method('get'); 
 
-	if(!$information['oauth_token'])
+	
+	/*debug only*/
+	if(!$credentials['oauth_token'])
 	{
-		$information['oauth_token']= '7AWBUeaUFEKK5pbPgOVRZBLtxJ4x1seS8bar1JY83X3pHn6rJj';
-		$information['oauth_token_secret']= 'C9us5fF3sHmVc8wqOXyt8Uvya4ZIL4rnGg1pceM4jvkD9BHpl2';
+		$credentials['oauth_token']= '7AWBUeaUFEKK5pbPgOVRZBLtxJ4x1seS8bar1JY83X3pHn6rJj';
+		$credentials['oauth_token_secret']= 'C9us5fF3sHmVc8wqOXyt8Uvya4ZIL4rnGg1pceM4jvkD9BHpl2';
 
 	}
-	$tumblr->set_token($information['oauth_token'], $information['oauth_token_secret']);
+	$tumblr->set_token($credentials['oauth_token'], $credentials['oauth_token_secret']);
 
-	//data that makes up the post
+	/* Begin parsing */
 	
 	$data = array();
 
 	$data['post'] = array(
 	'type' => 'regular',
-	'title' => $information['title'],
-	'body' => preg_replace("/[^a-zA-Z0-9\s]/", "", strip_tags(stripHTML($information['content'])))
+	'title' => $feed_data['title'],
+	'body' => preg_replace("/[^a-zA-Z0-9\s]/", "", strip_tags(stripHTML($feed_data['content'])))
 	//'body' => html_entity_decode( strip_tags(stripHTML($information['content'])))
 	);
 
@@ -78,19 +72,53 @@ function postToAPI($information = null){
 	echo (strip_tags(html_entity_decode($information['content'], ENT_COMPAT, 'UTF-8')));
 	*/
 	
-	//post the datat to Tumblr
+	/*end parsing */
+	
+	//post the data to Tumblr
 	$response = $tumblr->fetch('http://www.tumblr.com/api/write', $data);
  
 	//verify the post was successful
 	if($response['successful']) {
-	echo "Update successful!<br><br>";
+		return true;
 	} else {
-	echo "Update failed. {$response[body]}<br><br>";
-		print_r($information['content']);
+		return false;
 	}
-	return response;
 
 }
 
+function getUserInfo( $credentials = null)
+{
+
+xhttp::load('profile,oauth');
+	$tumblr = new xhttp_profile();
+	$tumblr->oauth(CONSUMER_TOKEN, CONSUMER_SECRET);
+	$tumblr->oauth_method('get'); 
+
+	
+	/*debug only*/
+	if(!$credentials['oauth_token'])
+	{
+		$credentials['oauth_token']= '7AWBUeaUFEKK5pbPgOVRZBLtxJ4x1seS8bar1JY83X3pHn6rJj';
+		$credentials['oauth_token_secret']= 'C9us5fF3sHmVc8wqOXyt8Uvya4ZIL4rnGg1pceM4jvkD9BHpl2';
+
+	}
+	$tumblr->set_token($credentials['oauth_token'], $credentials['oauth_token_secret']);
+	
+	$data = array();
+
+	$data['post'] = null;
+	
+	//post the data to Tumblr
+	$response = $tumblr->fetch('http://www.tumblr.com/api/authenticate', $data);
+ 
+	//verify the post was successful
+	if($response['successful']) {
+		$userinfo['name'] = $response['profile']['name'];
+		return $userinfo;
+	} else {
+		return false;
+	}
+
+}
 }
 ?>

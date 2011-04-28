@@ -1,5 +1,7 @@
 <?php
-
+require_once('config.php');
+require_once('../../lib/functions.php');
+require_once('class-xhttp-php/class.xhttp.php');
 /* 
 * 
 * file: sno_twitter.php 
@@ -43,50 +45,90 @@ $twitter->postToAPI($info);*/
 
 class twitter{
 
-function postToAPI($information){
-	$consumer_key='87l3QJ3z5UYrGEI6njrekA';
-	$consumer_secret_key='2wiFiQ79tjTBPVHC6mo6dDtIUhfPQDdfPYZTFOGg';
-
-	echo "posting...";
-
+public function postToAPI($feed_data = NULL, $credentials = NULL){
+	
 	xhttp::load('profile,oauth');
-	$tumblr = new xhttp_profile();
-	$tumblr->oauth($consumer_key, $consumer_secret_key);
-	$tumblr->oauth_method('get'); 
+	$twitter = new xhttp_profile();
+	$twitter->oauth(CONSUMER_KEY, CONSUMER_SECRET);
+	$twitter->oauth_method('get'); 
 
-	if(!$information['oauth_token'])
+	/*debug only*/
+	if(!$credentials['oauth_token'])
 	{
-		$information['oauth_token']= '267829590-38kCQPSk9LWsAj7aEMpEi5ifDtBtxWHHIsFLgsKU';
-		$information['oauth_token_secret']= 'nJdUtTY6nGjW76rMNgWNmZxDbDabQ8jupO4gKJUJsig';
+		$credentials['oauth_token']= '267829590-38kCQPSk9LWsAj7aEMpEi5ifDtBtxWHHIsFLgsKU';
+		$credentials['oauth_token_secret']= 'nJdUtTY6nGjW76rMNgWNmZxDbDabQ8jupO4gKJUJsig';
 
 	}
 
-	$tumblr->set_token($information['oauth_token'], $information['oauth_token_secret']);
+	$twitter->set_token($credentials['oauth_token'], $credentials['oauth_token_secret']);
 
-	//data that makes up the post
+	/* Begin parsing stuff */
 	
 	$data = array();
 	//if there is no link post title
-	if($information['bitlyURL']){
-		$data['post']['status'] = $information['bitlyURL'];
+	if($feed_data['bitlyURL']){
+		$data['post']['status'] = $feed_data['bitlyURL'];
 	}else{
-		$data['post']['status'] = $information['title'];
+		$data['post']['status'] = $feed_data['title'];
 	}
-	//post the datat to Twitter
-	$response = $tumblr->fetch('http://api.twitter.com/1/statuses/update.json', $data);
+	
+	
+	/* End parsing stuff */
+	
+	//post the data to Twitter
+	$response = $twitter->fetch('http://api.twitter.com/1/statuses/update.json', $data);
  
-	//verify the post was successful
+	/*debug only*/
 	if($response['successful']) 
 	{
-		echo "Update successful!<br><br>";
+		return true;
 	} 
 	else 
 	{
-		echo "Cannot duplicate post.<br>";
+		return false;
 	}
+	/*deprecated*/
 	return response;
 
 }
 
+public function getUserInfo( $credentials = null)
+	{
+	xhttp::load('profile,oauth');
+	$twitter = new xhttp_profile();
+	$twitter->oauth(CONSUMER_KEY, CONSUMER_SECRET);
+	$twitter->oauth_method('get'); 
+
+	/*debug only*/
+	if(!$credentials['oauth_token'])
+	{
+		$credentials['oauth_token']= '267829590-38kCQPSk9LWsAj7aEMpEi5ifDtBtxWHHIsFLgsKU';
+		$credentials['oauth_token_secret']= 'nJdUtTY6nGjW76rMNgWNmZxDbDabQ8jupO4gKJUJsig';
+
+	}
+
+	$twitter->set_token($credentials['oauth_token'], $credentials['oauth_token_secret']);
+
+	$data = null;
+
+	//post the data to Twitter
+	$response = $twitter->fetch('http://api.twitter.com/1/account/verify_credentials.json', $data);
+ 
+
+	if($response['successful']) 
+	{
+		$userinfo['name'] = $response['body']['name'];
+		$userinfo['screen_name'] = $response['body']['screen_name'];
+		$userinfo['id'] = $response['body']['id'];
+		$userinfo['picture'] = striplashes($response['body']['profile_image_url']);
+		
+		return $userinfo;
+	} 
+	else 
+	{
+		return false;
+	}
+
+	}
 }
 ?>
