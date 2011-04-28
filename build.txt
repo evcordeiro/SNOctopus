@@ -15,6 +15,20 @@ Use www.sno.wamunity.com/build/test directory for testing
 
 Last Build:
 
+4/27/2011 8:20 by EC
+
+index.php in root for main ui access
+twitter, facebook, tumblr plugins updated:
+getUserInfo() active and working
+postToAPI() active and working
+getOAuths active and working
+config files for plugins added to hide app secrets
+added postErrorMessage($string) to /lib/functions.php (not very pretty)
+ui files from test server added (feed_data.php etc)
+
+
+Build History:
+
 4/21/2011 2:30PM by EC
 
 Updated networks to get_oauth cookie handling framework
@@ -24,8 +38,6 @@ Still need DB library functions for additional functionality
 facebook plugin supports getUserInfo() method as required by project architecture
 facebook plugin updated get_oauth/post credentials interactions
 facebook plugin description of framework for handling manage_pages permissions ui
-
-Build History:
 
 
 3/31/2011 1:30AM by Lior
