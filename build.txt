@@ -1,0 +1,97 @@
+Current build instructions (05/04/2011)
+
+NOTE: If you do not have GIT set up already, use this link to get started: 
+    http://help.github.com/linux-set-up-git/
+
+1) clone a copy of the repository locally. In terminal, type: 
+    git clone git@github.com:evcordeiro/SNOctopus.git
+2) Move the clone of the repository to your active web directory (ex. www/ or public_html/)
+3) Use the .sql script to create the empty database with tables needed for SNOctopus to run:
+    In phpmyadmin: upload or copy the script contents to the SQL window, and execute the query.
+    (You will have to set up user access to this database, in cPanel or in the script)
+4) Edit the database access file: lib/db/config.ini
+    * You must change the user name, password, and anything else you changed to the appropriate settings.
+    * Note: Lines starting with semi-colons are considered comments in .ini files.
+5) Browse to your new SNOctopus server. The contents of index.php should appear.
+6) Proceed making a new user and test the functionality.
+
+
+----------------------------------------------------------------
+V 0.5 Build instructions:
+
+1) ftp local files to www.sno.wamunity.com/build/
+2) Create a new mysql database to be used by this program 
+3) Edit /ui/settings.php and add mysql credentials
+4) go to /ui/ on a browser for installation process. 
+5) test build output www.sno.wamunity.com/build/
+6) edit build.txt (this file) with appropriate notes (save last build under history)
+7) add/commit/push local to https://evcordeiro@github.com/evcordeiro/SNOctopus.git 
+
+Additional notes:
+www.sno.wamunity.com/build/ should be identical to the files on the github repository and presumably be fully functional at any given point, with the obvious exception when a component never worked in the first place.
+
+Use www.sno.wamunity.com/build/test directory for testing
+
+Last Build:
+
+4/27/2011 8:20 by EC
+
+index.php in root for main ui access
+twitter, facebook, tumblr plugins updated:
+getUserInfo() active and working
+postToAPI() active and working
+getOAuths active and working
+config files for plugins added to hide app secrets
+added postErrorMessage($string) to /lib/functions.php (not very pretty)
+ui files from test server added (feed_data.php etc)
+
+
+Build History:
+
+4/21/2011 2:30PM by EC
+
+Updated networks to get_oauth cookie handling framework
+get_oauth for twitter, tumblr and facebook plugins working standalone
+tumblr commented to break currently 
+Still need DB library functions for additional functionality
+facebook plugin supports getUserInfo() method as required by project architecture
+facebook plugin updated get_oauth/post credentials interactions
+facebook plugin description of framework for handling manage_pages permissions ui
+
+
+3/31/2011 1:30AM by Lior
+
+Notes:
+Build in one step added. 
+installation file added, allowing the project to be ported.
+/ui/install/index.php
+
+
+
+
+3/29/2011 4:04PM by EC
+Notes:
+This build was ugly.
+Twitter return duplicate posts errors. Fine, but should hide this.
+Tumblr Authentication has periodic errors. Need to determine source.
+Links added to verify output.
+Moved /Magpie to /archive
+added networks.php to /ui and related images to /images
+
+3/26/2011 12:54 AM by Lior
+Notes:
+Wamunity appears to be down. Tested files on a different server. 
+Current ui is available on http://snoctop.us, will move to wamunity when available.
+user management platform added (based on usercacke). 
+
+
+
+3/20/2011 6:00 PM by EC
+Notes:
+File structure on test site modified to contain a /build directory
+Facebook plugin: has basic posting functionality
+Tumblr plugin: broken (sessions/cookie issues?)
+Digg plugin: no files
+Twitter plugin: no files
+GPL license on all relevant files
+Added build instructions and notes (build.txt)
