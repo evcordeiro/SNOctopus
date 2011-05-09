@@ -1,5 +1,5 @@
 <?php
-require_once("functions.php");
+require_once("lib/functions.php");
 /*****************
 *
 *   file:           index.php
@@ -26,9 +26,10 @@ require_once("functions.php");
 /** Begin of RSS Retrieval **/ 
 $feed1 = "http://www.citizenschools.org/feed/atom/";
 $feed2 =  "http://snoctopus.blogspot.com/rss.xml"; 
-
+$feed3 = "http://feeds.nytimes.com/nyt/rss/World";
 parseFeed($feed1);
 parseFeed($feed2);
+parseFeed($feed3);
 
 function parseFeed($feed)
 {
@@ -37,8 +38,8 @@ $xmlstr = file_get_contents($feed);
 $sitemap = simplexml_load_string($xmlstr);
 
 echo "<pre>";
-echo "<br><b>Available Plugins:</b><br>";
-print_r($sitemap	);
+
+print_r($sitemap);
 echo "</pre>";
 
 /** Parse some XML **/

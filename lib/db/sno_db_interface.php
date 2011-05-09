@@ -18,6 +18,7 @@ class sno_db_interface
      */    
     private static function newDbConnection($file = 'config.ini')
     {
+
         if (!$settings = parse_ini_file($file, true)) throw new exception('Unable to open ' . $file . '.');
         
         $dns = $settings['database']['driver'] 
@@ -36,6 +37,7 @@ class sno_db_interface
         }
     }
 
+    
     /**
      *  Prepares and executes a query from the user.
      *
@@ -68,6 +70,69 @@ class sno_db_interface
 	
     }
 
+     /**
+     *  Prepares and executes a query from the user.
+     *
+     *  @param    String $queryString    An SQL query string.
+     *            Array  $paramArray     An array of parameters.
+     *  @return   PDOStatment Object     An object that contains 
+     */
+    public static function executePreparedQueryN($queryString, $paramArray)
+    {
+        try {
+            $dbConn = self::newDbConnection();
+            $stmt = $dbConn->prepare($queryString);
+        } catch (PDOException $e) {
+            echo 'Error in query preparation: ' . $e->getMessage();
+            return null;
+        }
+
+	if ($stmt->execute($paramArray)) {
+	   $dbConn = null; // Kill DB connection
+	   return $stmt;
+	} else {
+	     echo 'Error on query execution: ';
+	     echo '<pre>';
+	     print_r($stmt->errorInfo());
+	     print_r($paramArray);
+	     echo '</pre>';
+	     $dbConn = null;
+	     return null;
+	}
+    }
+    
+    public static function returnInsertIdAfterQuery($queryString, $paramArray)
+    {
+        try {
+            $dbConn = self::newDbConnection();
+            $stmt = $dbConn->prepare($queryString);
+            $stmt2 = $dbConn->prepare("select LAST_INSERT_ID()");
+        } catch (PDOException $e) {
+            echo 'Error in query preparation: ' . $e->getMessage();
+            return null;
+        }
+
+	if ($stmt->execute($paramArray)) {
+	   if ($stmt2->execute(array())) {
+	       $dbConn = null; // Kill DB connection
+	       $result = $stmt2->fetchAll();
+	       var_dump($result);
+	       return;
+	   } else {
+	       $dbConn = null;
+	       return null;
+	   }
+	} else {
+	     echo 'Error on query execution: ';
+	     echo '<pre>';
+	     print_r($stmt->errorInfo());
+	     print_r($paramArray);
+	     echo '</pre>';
+	     $dbConn = null;
+	     return null;
+	}
+    }
+	
     /**
      *  Gets a result set array from a valid query. For random queries. Escape input!
      *
@@ -80,7 +145,7 @@ class sno_db_interface
         $dbh = self::newDbConnection();
         $resultSet = $dbh->query($queryString);
         $dbh = null;
-        return $resultSet->fetchAll();
+        return $resultSet->fetchAlvar_dump($result);l();
     }
 
     /**
@@ -91,7 +156,7 @@ class sno_db_interface
      */
     public static function getNetworkIdArrayFromUserId($userId)
     {
-        $pdoStatement = self::executePreparedQuery("select * from 'networks' where 'user_id'='?'", 
+        $pdoStatement = self::executePreparedQuery("select * from networks where user_id=?", 
                                                    array($userId));
         return $pdoStatement->fetchAll();
     }
@@ -165,7 +230,10 @@ class sno_db_interface
      *
      *  @param   string $networkId   A string representation of a global network id for a user.
      *  @return  boolean             True if service is active, false otherwise.
-     *
+     *l();
+    }
+
+    /*
      */
     public static function isServiceActive($networkId)
     {
@@ -189,22 +257,34 @@ class sno_db_interface
     public static function setNewNetwork($userId, $networkName, $nickname, $credentialArray, $activeState = 1)
     {
 	$enCred = base64_encode(serialize($credentialArray));
-        $pdoStatement = self::executePreparedQuery("insert into networks "
-                                             . "(user_id, network_name, network_label, credentials, active_state) "
-                                             . "values (?, ?, ?, ?, ?)", 
-                                             array($userId, $networkName, $nickname, $enCred, $activeState));                                 
+        $ID = self::returnInsertIdAfterQuery("insert into `networks` "
+                                             . "(network_id, user_id, network_name, network_label, credentials, active_state) "
+                                             . "values (NULL, ?, ?, ?, ?, ?)", 
+                                             array($userId, $networkName, $nickname, $enCred, $activeState));
+        var_dump($ID); return $ID;                                                                
     }
 
     /**
-     *  Make a new mapping from a feed to a network.
+     *  Make a new mapping from a 
+     */
+    publifeed to a network.
      *
      */
     public static function setNewFeedMap($feedUrl, $networkId, $activeState = 1)
     {
-        $pdoStatement = self::executePreparedQuery("insert into 'maps' "
-                                             . "(feed_url, network_id,bactive_state) "
-                                             . "values (?, ?, ?)",
-                                             array($feedUrl, $networkId, $activeState));
+        $count = self::resultArrayFromQuery('SELECT COUNT(*) FROM `maps` WHERE feed_url="' 
+                                            . $feedUrl 
+                                            . '" AND network_id=' . $networkId);
+
+        if($count[0][0] > 0){
+            $query = 'UPDATE `maps` SET active_state=? WHERE feed_url=? AND network_id=?';
+            $values = array($activeState, $feedUrl, $networkId);	
+	} else {
+	    $query = 'INSERT INTO `maps` (feed_url, network_id, active_state) VALUES (?, ?, ?)';
+	    $values = array($feedUrl, $networkId, $activeState);
+	}
+
+        $pdoStatement = self::executePreparedQuery($query, $values);
     }
 
     /**
@@ -214,10 +294,53 @@ class sno_db_interface
      */
     public static function setNewPost($feedUrl, $networkId, $publishDateTime, $bitlyUrl)
     {
-        $pdoStatement = self::executePreparedQuery("insert into 'posts' "
+        $pdoStatement = self::executePreparedQuery("insert into posts "
                                              . "(feed_url, network_id, publish_date, bitly_link) "
                                              . "values (?, ?, ?, ?)",
                                              array($feedUrl, $networkId, $publishDateTime, $bitlyUrl));
+    }
+	
+    public static function updateActiveStatus($netId, $state)
+    {
+        $pdoStatement = self::executePreparedQuery("update `networks` set active_state=? where network_id=?",
+                                             array($state, $netId));
+        if ($pdoStatement)
+	    return $state;
+        else 
+	    return null;								 
+    }
+    
+    
+    
+    public static function deleteNetwork($networkId)
+    {
+        $error = '';
+        
+        $pdoStatement = self::executePreparedQuery("delete from `networks` where network_id=?",
+                                             array($networkId));
+        if (!$pdoStatement) {
+	    $error .= 'Failed to delete network from table networks.'; 
+	    return false;
+        }	
+	    				
+	$pdoStatement = self::executePreparedQuery("delete from `maps` where network_id=?",
+                                             array($networkId));
+        
+        if (!$pdoStatement) {
+	   $error .= 'Failed to delete network maps from table maps.'; 
+	   return false;
+	}
+        
+        $pdoStatement = self::executePreparedQuery("delete from `posts` where network_id=?",
+                                             array($networkId));
+        
+         if (!$pdoStatement) {
+	    $error .= 'Failed to delete posts from table posts.'; 
+	    return false;
+	 } else {
+	     return true; 
+	 }                          
+			 
     }
 
     

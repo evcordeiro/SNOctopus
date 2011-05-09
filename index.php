@@ -193,7 +193,7 @@ $.get("ajax.php", { option: "0", value[]:{ $('input[name="feed"]').val()}, arg2 
 			<?php
 					if ( $user->is_loaded() ){
 			?>
-			<div id="infobox"><center><img src="images/loading.gif"></center></div>
+			<div id="infobox"><center><img src="images/loading.gif"></center></div>			<div id="feedsandjunk">						<?php			echo "</center>";			echo "<pre>";			print_r($user);			echo "<br>";			$stuff = sno_db_interface::getNetworkIdArrayFromUserId($user->user_id);			print_r($stuff);			echo "</pre>";			echo "<center>";			?>			</div>			
 			<?php } ?>
 		</div>
 		<div id="footer">

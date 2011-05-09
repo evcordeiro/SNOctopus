@@ -74,15 +74,13 @@ if($_GET['oauth_token'] == $locals['oauth_token'] and $_GET['oauth_verifier'] an
        # for reading protected entries, sending a post updates.
        $var = xhttp::toQueryArray($response['body']);
 
+	   
+	   /* 'user_id' and 'screen_name' don't seem to apply to tumblr */
         $credentials['oauth_token'] = $var['oauth_token'];
         $credentials['oauth_token_secret'] = $var['oauth_token_secret'];
+		$credentials['name'] = $response['request']['profile']['name'];
         $locals['loggedin'] = true;
-		
-		$data = null;
-		$tumblr->set_token($credentials['oauth_token'], $credentials['oauth_token_secret']);
-		$response = $tumblr->fetch('http://www.tumblr.com/api/authenticate', $data);
-		$userinfo['name'] = $response['profile']['name'];
-		
+
 		if(!isset($_COOKIE['sno_info']))
 		{
 			eat_cookie();
@@ -92,12 +90,16 @@ if($_GET['oauth_token'] == $locals['oauth_token'] and $_GET['oauth_verifier'] an
 		
 		$uinf = unserialize(base64_decode($_COOKIE['sno_info']));
 	
-		/* Do we need this typecast */
-		sno_db_interface::setNewNetwork((int)($uinf['user_name']), "tumblr" , $response['profile']['name'] , $credentials, 1 );
-			
+		$userinfo['name'] = $response['request']['profile']['name'];
+
+		
+		sno_db_interface::setNewNetwork(($uinf['user_id']), "tumblr" , $userinfo['name'] , $credentials, 1 );
+
 		/*debug*/
 		eat_cookie();
+		
 		echo("<script> top.location.href='http://www.sno.wamunity.com/build/index.php'</script>");
+		
 		die();
 		
     } else {

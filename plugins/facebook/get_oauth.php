@@ -20,7 +20,6 @@
 	}
 	
 	else{
-	
 		if(empty($code)) {
 			$dialog_url = "http://www.facebook.com/dialog/oauth?client_id=" 
             . APP_ID . "&redirect_uri=" . urlencode(CALLBACK_URL) . "&scope=" . PERMISSIONS;
@@ -31,11 +30,11 @@
 		else{
 	
 			$token_url = "https://graph.facebook.com/oauth/access_token?client_id="
-				. $app_id . "&redirect_uri=" . urlencode($my_url) . "&client_secret="
-				. $app_secret . "&code=" . $code;
+				. APP_ID . "&redirect_uri=" . urlencode(CALLBACK_URL) . "&client_secret="
+				. APP_SECRET . "&code=" . $code;
 
 			$access_token = file_get_contents($token_url);
-	
+
 			$graph_url = "https://graph.facebook.com/me?" . $access_token;
 
 			$user = json_decode(file_get_contents($graph_url));
@@ -75,10 +74,13 @@
 				
 			$uinf = unserialize(base64_decode($_COOKIE['sno_info']));
 
-			sno_db_interface::setNewNetwork($uinf['user_name'], "facebook" , $user->username, $credentials, true );
+			sno_db_interface::setNewNetwork($uinf['user_id'], "facebook" , $user->name, $credentials, true );
 			
+			echo ($uinf['user_id'] . "facebook   " . $user->username . "  " . " credentials "  . " true" );
+
 			echo("<script> top.location.href='http://www.sno.wamunity.com/build/index.php'</script>");
 			
+			die();
 		}
 	}
 ?>

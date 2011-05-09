@@ -1,6 +1,6 @@
 <?php
-require_once("lib/functions.php");
-require_once("bitly/sno_bitly.php");
+require_once("lib/functions.php");
+require_once("bitly/sno_bitly.php");require_once("lib/db/sno_db_interace.php");
 /*****************
 *
 *   file:           index.php
@@ -58,23 +58,14 @@ mysql_select_db($dbname);
 /*$tagger[] = "tumblr";
 $tagger[] = "twitter";
 $tagger[] = "facebook";
-
-
 $tagger = serialize($tagger);
 $result = mysql_query("UPDATE feeds SET tags='$tagger' WHERE userid=1") or die(mysql_error());  */
-
-
-$result = mysql_query("SELECT feeds.urlid,feeds.tags FROM user LEFT JOIN feeds ON user.id = feeds.userid LEFT JOIN entries ON feeds.urlid=entries.urlid") or die(mysql_error());  
-
-
-while($query = mysql_fetch_array( $result )){
+$result = mysql_query("SELECT feeds.urlid,feeds.tags FROM user LEFT JOIN feeds ON user.id = feeds.userid LEFT JOIN entries ON feeds.urlid=entries.urlid") or die(mysql_error());  
+while($query = mysql_fetch_array( $result )){
 	parseFeed($query);
 }
-
-/** End Database **/
+/** End Database **/
 function parseFeed($query){
-
-
 	$xmlstr = file_get_contents($query['urlid']);
 	$sitemap = simplexml_load_string($xmlstr);//echo "<br><br>sitemap<br>";	//var_dump($sitemap);	
 	/** Parse some XML **/
@@ -85,7 +76,6 @@ function parseFeed($query){
 		$tags[] = $tag["term"];
 	}
 /** End of RSS Retrieval **/ 
-
 /** Begin Commit to Plugins **/ 
 
 	// ATM this will only retrieve the last post. It will not check if we have already retrieved it.
@@ -103,10 +93,7 @@ function parseFeed($query){
 		$information['timestamp'] = $sitemap->entry[$count]->published;
 		$information['blogTime'] =  $sitemap->updated;
 		$information['tags'] = $tags;
-	  		
 //		$result = mysql_query("UPDATE entries SET tags='$tagger' WHERE userid=1") or die(mysql_error());  				
-
-			
 			foreach(unserialize($query['tags']) as $service ){
 				// only post to our services with the sno_prefix.
 				$service_file = './plugins/'.$service.'/sno_'.$service.'.php';
@@ -118,17 +105,9 @@ function parseFeed($query){
 					echo "</b>";
 				}	
 			}
-			
-
 	//	$count++;
-	//}
 }  
-
-
-
-
  /** End Commit to Plugins **/ 
- 
  /** Where did we post? **/
 	echo "<br>";
 	echo ("<a href='http://snoctop.us/index.php'>http://snoctop.us/index.php</a><br>");

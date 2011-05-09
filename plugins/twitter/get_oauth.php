@@ -84,7 +84,7 @@ if($_GET['oauth_token'] == $locals['oauth_token'] and $_GET['oauth_verifier'] an
 		
 		$uinf = unserialize(base64_decode($_COOKIE['sno_info']));
 		
-		sno_db_interface::setNewNetwork($uinf['user_name'], "twitter" , $credentials['screen_name'], $credentials, true );
+		sno_db_interface::setNewNetwork($uinf['user_id'], "twitter" , $credentials['screen_name'], $credentials, true );
 		
 		/*debug*/
 		eat_cookie();
