@@ -34,6 +34,18 @@ Use www.sno.wamunity.com/build/test directory for testing
 
 Last Build:
 
+5/9/2011 2:30 by EC
+
+sno_db_interface class updated
+plugins now retrieve oauth and successfully add to db
+index.php displays networks registered to logged in user
+
+known issues:
+tumblr plugin postToAPI not working
+
+
+Build History:
+
 4/27/2011 8:20 by EC
 
 index.php in root for main ui access
@@ -44,9 +56,6 @@ getOAuths active and working
 config files for plugins added to hide app secrets
 added postErrorMessage($string) to /lib/functions.php (not very pretty)
 ui files from test server added (feed_data.php etc)
-
-
-Build History:
 
 4/21/2011 2:30PM by EC
 
