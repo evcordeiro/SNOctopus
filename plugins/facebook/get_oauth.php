@@ -70,13 +70,15 @@
 	
 			*/	
 			$credentials['id'] = $user->id;
-			$credentials['access_token'] = $access_token;
+			// here we force the token format as a string to avoid the annoying tendency of php to switch to
+			// switch to scientific notation, also we clip the 'access_token=' off of the beginning
+			$credentials['access_token'] = substr($access_token, 13);
 				
 			$uinf = unserialize(base64_decode($_COOKIE['sno_info']));
 
 			sno_db_interface::setNewNetwork($uinf['user_id'], "facebook" , $user->name, $credentials, true );
 			
-			echo ($uinf['user_id'] . "facebook   " . $user->username . "  " . " credentials "  . " true" );
+			//echo ($uinf['user_id'] . "facebook   " . $user->username . "  " . " credentials "  . " true" );
 
 			echo("<script> top.location.href='http://www.sno.wamunity.com/build/index.php'</script>");
 			

@@ -28,6 +28,7 @@ class sno_db_interface
         $user = $settings['db_auth']['username'];
         $pass = $settings['db_auth']['password'];
 
+
         try {
             $dbh = new PDO($dns, $user, $pass);
             return $dbh;
@@ -74,8 +75,12 @@ class sno_db_interface
      *  Prepares and executes a query from the user.
      *
      *  @param    String $queryString    An SQL query string.
-     *            Array  $paramArray     An array of parameters.
-     *  @return   PDOStatment Object     An object that contains 
+     *            Array  $paramArray     An arraye a new mapping from a 
+     *
+     *
+     * of parameters.
+     *  @return   PDOStatment Object     An object tha of parameters.
+     *  @return   PDOStatment Object     An object that cot contains 
      */
     public static function executePreparedQueryN($queryString, $paramArray)
     {
@@ -114,10 +119,9 @@ class sno_db_interface
 
 	if ($stmt->execute($paramArray)) {
 	   if ($stmt2->execute(array())) {
-	       $dbConn = null; // Kill DB connection
-	       $result = $stmt2->fetchAll();
-	       var_dump($result);
-	       return;
+	       $dbConn = null; // Kill DB connection 
+	       $tmp =  $stmt2->fetchAll();   
+	       return $tmp[0][0];
 	   } else {
 	       $dbConn = null;
 	       return null;
@@ -145,7 +149,7 @@ class sno_db_interface
         $dbh = self::newDbConnection();
         $resultSet = $dbh->query($queryString);
         $dbh = null;
-        return $resultSet->fetchAlvar_dump($result);l();
+        return $resultSet->fetchAll();
     }
 
     /**
@@ -261,13 +265,11 @@ class sno_db_interface
                                              . "(network_id, user_id, network_name, network_label, credentials, active_state) "
                                              . "values (NULL, ?, ?, ?, ?, ?)", 
                                              array($userId, $networkName, $nickname, $enCred, $activeState));
-        var_dump($ID); return $ID;                                                                
+        return $ID;                                                                
     }
 
     /**
      *  Make a new mapping from a 
-     */
-    publifeed to a network.
      *
      */
     public static function setNewFeedMap($feedUrl, $networkId, $activeState = 1)

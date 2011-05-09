@@ -1,4 +1,4 @@
-<?php
-echo $_REQUEST['id'];
-
+<?php
+echo $_REQUEST['id'];
+
 ?>
