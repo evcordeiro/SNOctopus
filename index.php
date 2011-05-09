@@ -138,7 +138,7 @@ if (!empty($_POST['username']) && isset($_GET['register']) ){
 					    $alert .= '<li>Wrong username and/or password</li>';
 					  }else{
 					    //user is now loaded
-					    echo "<script>window.setTimeout('location.replace(\"example.php\")', 100);</script>";
+					    echo "<script>window.setTimeout('location.replace(\"index.php\")', 100);</script>";
 					    //header('Location: http://'.$_SERVER['HTTP_HOST'].$_SERVER['PHP_SELF']);
 					  }
 					}
@@ -155,7 +155,7 @@ if (!empty($_POST['username']) && isset($_GET['register']) ){
 					 <p><span>password:<input type="password" name="pwd" /></span></p>
  					 <p><span>retype password: <input type="password" name="rpwd" /></span></p>
 					 
-					 <input type="submit" value="Register" /><input type="button" value="Login" onclick="window.location.href=\'example.php\'">
+					 <input type="submit" value="Register" /><input type="button" value="Login" onclick="window.location.href=\'index.php\'">
 					</form>';
 					if(isset($alert))
 						echo '<div id="error"><ul id="alert">'.$alert.'</ul></div>';

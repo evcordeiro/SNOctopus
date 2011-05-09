@@ -201,6 +201,54 @@ public function referrerHash($hash){
 			$e->getMessage() . $this->break;
 		exit;
 	}
+
+	/*clean up referrers
+		searches url of referrers for common sources, combines like ones from known social networks (facebook, tumblr, twitter)
+		all others are put under 'other'	
+	*/
+	$count = count($referrer);
+	$twitter_loc = -1;
+	$facebook_loc = -1;
+	$tumblr_loc = -1;
+	$other_loc = -1;
+	while($count >= 0){
+		$count--;
+		if(stristr($referrer[$count]['referrer'],'twitter')){
+			if($twitter_loc == -1){
+				$twitter_loc = $count;
+				$referrer[$twitter_loc]['referrer'] = 'twitter';
+			}else{
+				$referrer[$twitter_loc]['clicks'] += $referrer[$count]['clicks'];				
+				unset($referrer[$count]);
+			}
+		}else if(stristr($referrer[$count]['referrer'],'facebook')){
+			if($facebook_loc == -1){
+				$facebook_loc = $count;
+				$referrer[$facebook_loc]['referrer'] = 'facebook';
+			}else{
+				$referrer[$facebook_loc]['clicks'] += $referrer[$count]['clicks'];				
+				unset($referrer[$count]);
+			}
+		}else if(stristr($referrer[$count]['referrer'],'tumblr')){
+			if($tumblr_loc == -1){
+				$tumblr_loc = $count;
+				$referrer[$count]['referrer'] = 'tumblr';
+			}else{
+				$referrer[$tumblr_loc]['clicks'] += $referrer[$count]['clicks'];				
+				unset($referrer[$count]);
+			}
+		}else{
+			if($other_loc == -1){
+				$other_loc = $count;
+				$referrer[$other_loc]['referrer'] = 'other';
+			}else{
+				$referrer[$other_loc]['clicks'] += $referrer[$count]['clicks'];
+				unset($referrer[$count]);
+			}
+		}
+	}
+	$referrer = array_values($referrer);
+	sort($referrer);	
 	return $referrer;	
 }
 }
