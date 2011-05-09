@@ -1,4 +1,23 @@
-Build instructions:
+Current build instructions (05/04/2011)
+
+NOTE: If you do not have GIT set up already, use this link to get started: 
+    http://help.github.com/linux-set-up-git/
+
+1) clone a copy of the repository locally. In terminal, type: 
+    git clone git@github.com:evcordeiro/SNOctopus.git
+2) Move the clone of the repository to your active web directory (ex. www/ or public_html/)
+3) Use the .sql script to create the empty database with tables needed for SNOctopus to run:
+    In phpmyadmin: upload or copy the script contents to the SQL window, and execute the query.
+    (You will have to set up user access to this database, in cPanel or in the script)
+4) Edit the database access file: lib/db/config.ini
+    * You must change the user name, password, and anything else you changed to the appropriate settings.
+    * Note: Lines starting with semi-colons are considered comments in .ini files.
+5) Browse to your new SNOctopus server. The contents of index.php should appear.
+6) Proceed making a new user and test the functionality.
+
+
+----------------------------------------------------------------
+V 0.5 Build instructions:
 
 1) ftp local files to www.sno.wamunity.com/build/
 2) Create a new mysql database to be used by this program 
