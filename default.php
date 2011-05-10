@@ -215,9 +215,11 @@
 			}
 			html ul.tabs li.active, html ul.tabs li.active a:hover  { /*--Makes sure that the active tab does not listen to the hover properties--*/
 				background: lightblue;
-				border-bottom: 1px solid lightblue; /*--Makes the active tab look like it's connected with its content--*/
+				border-bottom: 1px solid lightblue; 
+                        /*--Makes the active tab look like it's connected with its content--*/
 			}
-			.tab_container a{
+			
+                        .tab_container a{
 				color: #ccc;
 			}
 	
@@ -232,7 +234,6 @@
 				width: 100%;
 				background-color:lightblue;
 			}
-
 
 			.tab_content,.tab_content > a,.tab_content > a {
 				text-align:center;
@@ -249,6 +250,14 @@
 				background-color:#92C4D1;
 				margin:5px;
 			}
+                         .tab_container td.name {
+                                width:  70%;
+                                text-align:center;
+                        }
+                        .tab_container td.option {
+                                //padding: 0 20px;
+                                width:  50px;
+                        }
 			.tab_container td.toggle_active{
 				text-align:center;
 				background-color: #66FF66;				
@@ -257,3 +266,8 @@
 				text-align:center;
 				background-color: #CC9999;				
 			}
+
+.auto_margin {
+    margin: 0 auto;
+}
+
