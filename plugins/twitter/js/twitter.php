@@ -1,29 +1,27 @@
-<?php 
-	session_start();
-	require_once('../config.php');
-?>
-
-
-	
      twttr.anywhere(function (T) {
         if (T.isConnected()) {
-	      currentUser = T.currentUser;
-	      screenName = currentUser.data('screen_name');
+	      var currentUser = T.currentUser;
+	      var screenName = currentUser.data('screen_name');
 	     // alert(screenName);
-          $("#twttr-anywhere-button").append('<button id="signout" type="button">Sign out of Twitter</button>');
-          $("#signout").bind("click", function () {
-            twttr.anywhere.signOut();
-            location.reload();
-          });
+               twttr.anywhere.signOut();
+
         } else {
         	T("#twttr-anywhere-button").connectButton({
             authComplete: function(user, bridge_code) {
-              $.post('./plugins/twitter/js/convert.php', {'bridge_code': bridge_code}, function(data){
+
+            	var currentUser = T.currentUser;
+
+	      		var screenName = currentUser.data('screen_name');
+
+              $.post('./plugins/twitter/convert.php', {'bridge_code': bridge_code}, function(data){
+			 	 	var html = "<tr><td><img src='http://img.tweetimag.es/i/"+screenName+"'></td><td class='name'>"+screenName+"</td><td id='active' class='toggle_active' value='"+data+"' state='1' onmouseover='active();'>Active</td><td id=\"remove\" value='"+data+"' onmouseover='remove();'>Remove</td></tr>"
+
+$(".tab_container .tab_content table.twitter > tbody:first").append(html);	 
+					
               });
-            
+               twttr.anywhere.signOut();
             }
           });
-        	
-       
         }
       });
+     

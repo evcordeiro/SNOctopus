@@ -81,9 +81,9 @@ if (!empty($_POST['username']) && isset($_GET['register']) ){
         
         if ($userID == 0)
             //user is allready registered or something like that
-            $alert .= '<li>User not registered. Account may already be registered.</li>';
+            $alert .= '<li>User may already be registered.</li>';
         else {
-            $alert .= '<li>User registered. Activate your account using the instructions in your mail</li>';
+            $alert .= '<li>Your account has been created. You may now login.</li>';
             //Here is a sample mail that user will get:
             $email = 'Activate your user account by visiting : '
                    . $_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'] 
@@ -98,7 +98,7 @@ if (!empty($_POST['username']) && isset($_GET['register']) ){
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:fb="http://www.facebook.com/2008/fbml">
 
      <head>
-        <title>Stuff is cool</title>
+        <title>SNOctopus</title>
       	<link rel="stylesheet" href="default.php" type="text/css"> 
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
 <?php
@@ -124,6 +124,12 @@ if (!empty($_POST['username']) && isset($_GET['register']) ){
 <?php
     if ( $user->is_loaded() ){
         echo '<a href="'.$_SERVER['PHP_SELF'].'?logout=1">logout</a>';
+ 	    echo '<a id="help-button" href="images/SNO-help.png">help</a>';
+		echo "<script type=\"text/javascript\" src=\"js/jquery.lightbox-0.5.js\"></script>";
+		echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"js/jquery.lightbox-0.5.css\" media=\"screen\" />"; 
+		echo "	<script type='text/javascript'>
+			    $('#help-button').lightBox();
+			</script>";
     }
 ?>
         </div>
@@ -131,64 +137,57 @@ if (!empty($_POST['username']) && isset($_GET['register']) ){
             <div id="form">
 
 <?php
-    if ( !$user->is_loaded() && !isset($_GET['register'])) {
+    if (!$user->is_loaded()) {
 ?>
+<table id="login_table">
+    <tr>
+        <td>
+            <h1>Register</h1><br/>
+            <form method="post" action="<?php echo $_SERVER['PHP_SELF'];?>?register" />
+            <input class='field' type="text" name="username" value="username" />
+            <input class='field' type="password" name="pwd" value="password" />
+            <input class='field' type="password" name="rpwd" value="retype password" /><br/>
+            <input class='button' type="submit" value="Sign up" />
+            </form>
+        </td>
+        <td>
+            <h1>Login</h1><br>
+            <form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>" />
+            <input class='field' type="text" name="uname" value="username" />
+            <input class='field' type="password" name="pwd" value="password" />
+            <div class='space'>Remember me? <input type="checkbox" name="remember" value="1" /></div>
+            <input class='button' type="submit" value="Sign in" />
+            </form>
+        </td>
+    </tr>
+</table>
 
-                <div id="login">
-                    <h1>Login</h1>
-                    <form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>" />
-                    <p><span>username: <input type="text" name="uname" /></span></p>
-                    <p><span>password: <input type="password" name="pwd" /></span></p>
-                    <p><span>Remember me? <input type="checkbox" name="remember" value="1" /></span></p>
-                    <input type="button" value="Register" onclick="window.location.href=\'?register\'">
-                    <input type="submit" value="login" />
-                    </form>
 
 <?php        
-    //Login stuff:
-    if ( isset($_POST['uname']) && isset($_POST['pwd'])) {
+	    //Login stuff:
+	    if (isset($_POST['uname']) && isset($_POST['pwd'])) {
+	
+	        //  Mention that we don't have to use addslashes as the class do the job
+	        if (!$user->login($_POST['uname'],$_POST['pwd'],$_POST['remember'] )) { 
+	            $alert .= '<li>Wrong username and/or password</li>';
+	        } else {
+	            // user is now loaded
+	            echo "<script>window.setTimeout('location.replace(\"index.php\")', 100);</script>";
+	            // header('Location: http://'.$_SERVER['HTTP_HOST'].$_SERVER['PHP_SELF']);
+	        }
+	    }
+		    if(isset($alert))
+		        echo '<div id="error"><ul id="alert">'.$alert.'</ul></div>';
 
-        //  Mention that we don't have to use addslashes as the class do the job
-        if (!$user->login($_POST['uname'],$_POST['pwd'],$_POST['remember'] )) { 
-            $alert .= '<li>Wrong username and/or password</li>';
-        }else{
-            // user is now loaded
-            echo "<script>window.setTimeout('location.replace(\"index.php\")', 100);</script>";
-            // header('Location: http://'.$_SERVER['HTTP_HOST'].$_SERVER['PHP_SELF']);
-        }
-    }
-    if(isset($alert))
-        echo '<div id="error"><ul id="alert">'.$alert.'</ul></div>';
-     
-    echo '</div>';
                                         
-    } else if(!$user->is_loaded() && isset($_GET['register'])) {
-?>                                
-                <div id="login">
-                <h1>Register</h1>
-                <form method="post" action="<?php echo $_SERVER['PHP_SELF'];?>?register" />
-                <p><span>email: <input type="text" name="username" /></span></p>
-                <p><span>password:<input type="password" name="pwd" /></span></p>
-                <p><span>retype password: <input type="password" name="rpwd" /></span></p>
-                                        
-                <input type="submit" value="Register" />
-                <input type="button" value="Login" onclick="window.location.href=\'index.php\'">
-                </form>
-
-<?php        
-    if(isset($alert))
-        echo '<div id="error"><ul id="alert">'.$alert.'</ul></div>';
-    echo '</div>';
-                                                                
-    } else {
+   } else {
 ?>
-                <p>Welcome <b><?php echo $user->userData['username'];?></b></p>
+
+                <p>Welcome <b><?php echo $user->userData['username'];?></b> to SNOCTOPUS! The Social Network Octopus</p>
                                         
-                <br>
                 <ul class="tabs">
                     <li><a href="#tab1"><img src="images/facebook.png" /></a></li>
                     <li><a href="#tab2"><img src="images/twitter.png" /></a></li>
-                    <li><a href="#tab3"><img src="images/tumblr.png" /></a></li>
                 </ul>
 
 <?php 
@@ -240,7 +239,8 @@ if (!empty($_POST['username']) && isset($_GET['register']) ){
 ?>
 </tbody>
 </table>
-<fb:login-button>Add another Facebook account</fb:login-button>
+<br/>
+<fb:login-button perms="<?php echo $fbperms;?>">Add a Facebook account</fb:login-button>
 
 </div>
 		<div id="tab2" class="tab_content">
@@ -280,11 +280,7 @@ echo "</td>";
 			</tbody>
 		    </table>
 		</div>
-
-		    <div id="tab3" class="tab_content">
-		    	asdfasd adsf asd f
-		    </div>						
-	</div>
+</div>
         <div class="result">
            <p>
                <label>Add Feed:</label>
@@ -296,7 +292,7 @@ echo "</td>";
 <?php
     }
 ?>                      
-        </div>
+        </div> <!-- End ? -->
 <?php
     if ($user->is_loaded()) {
 ?>
@@ -306,7 +302,7 @@ echo "</td>";
                 
         <div id="footer">
             SNOctopus Inc., &copy; 2011  All Rights Reserved
-        </div>
+        </div> <!-- End footer -->
       
      </body>
  </html> 

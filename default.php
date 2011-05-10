@@ -254,6 +254,7 @@
                         }
                         .tab_container td.option {
                                 width:  55px;
+                                cursor: pointer;
                         }
 			.tab_container td.toggle_active{
 				background-color: #66FF66;				
@@ -264,4 +265,78 @@
 
 .auto_margin {
     margin: 0 auto;
+}
+
+
+/*----- Login table --------*/
+#login_table {
+    color: black;
+    margin: 0 auto; 
+}
+
+#login_table td{
+    /* Fallback for web browsers that doesn't support RGBa */
+    background: rgb(255, 255, 255);
+    /* RGBa with 0.6 opacity */
+    background: rgba(255, 255, 255, 0.8);
+    width: 250px;
+    padding: 10px;
+    margin: 0 10px; 
+    -moz-border-radius: 15px;
+     border-radius: 15px;
+     vertical-align: top;
+}
+
+#login_table h1 {
+	font-size:16px;
+	font-weight:bold;
+	margin-bottom:8px;
+}
+#login_table p{
+	font-size:11px;
+	color:#666666;
+	margin-bottom:20px;
+	border-bottom:solid 1px #b7ddf2;
+	padding-bottom:10px;
+}
+#login_table label{
+	display:block;
+	font-weight:bold;
+	text-align:right;
+	width:140px;
+	//float:left;
+}
+#login_table .small{
+	color:#666666;
+	display:block;
+	font-size:11px;
+	font-weight:normal;
+	text-align:right;
+	width:140px;
+}
+
+#login_table input.field{
+	//float:left;
+	font-size:12px;
+	padding:4px 2px;
+	border:solid 1px #aacfe4;
+	width:200px;
+	margin:2px 0 20px 10px;
+}
+#login_table .space{
+	//float:left;
+        //height: 20px;
+	//padding:4px 2px;
+	//border:solid 1px #aacfe4;
+	width:200px;
+	margin:0 10px 25px 10px;
+}
+
+#login_table input.button{
+
+	font-size:14px;
+	padding:4px 2px;
+	border:solid 1px black;
+	width:200px;
+	margin:2px 0 20px 10px;
 }

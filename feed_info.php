@@ -4,10 +4,12 @@
 			require 'bitly/gChart.php';
 			require 'bitly/sno_bitly.php';
 			require_once 'lib/functions.php';
+			require_once 'lib/access.class.php';
+
+			$user2 = new flexibleAccess();
 			
-			
-			$user = $_SESSION['SNOctopus'];
-			
+			$user = $user2->userID;
+ 
 			/* Posts associated by Network Id
 			 *  SELECT * FROM networks
 				LEFT JOIN posts ON networks.network_id = posts.network_id
@@ -15,10 +17,11 @@
 				ORDER BY posts.bitly_link
 
 			 */
-			$mapQuery = "SELECT DISTINCT `feed_url` FROM `maps`";
-			$pdoStatement = sno_db_interface::executePreparedQueryN($mapQuery,array());
+			$mapQuery = "SELECT DISTINCT `feed_url` FROM `maps` 
+			                    LEFT JOIN `networks` on networks.network_id = maps.network_id 
+			                    WHERE networks.user_id=?";
+			$pdoStatement = sno_db_interface::executePreparedQueryN($mapQuery, array($user));
 			$mapResults = $pdoStatement->fetchAll();
-			
 				
 			$query = "SELECT * FROM networks
 						LEFT JOIN posts ON networks.network_id = posts.network_id
@@ -106,27 +109,7 @@
 					
 				});
 			});
-			
-/*			$("#toggle .feed_details p#net_toggle").click(function(){
-				var output;
-				  if ($(this).is('.toggle_active')) {
-						$.get("ajax.php",{ 'option' : 1, 'values': $(this).attr("value") }, function(data){
-							output = data;
-
-							
-						});
-						alert(output);
-					    $(this).removeClass('toggle_active');
-					    $(this).addClass('toggle_inactive');
-				  } else {
-						$.get("ajax.php",{ 'option' : 1, 'values': $(this).attr("value") }, function(data){
-							alert(data);
-						});
-			    	  	$(this).removeClass('toggle_inactive');
-				    	$(this).addClass('toggle_active');
-				  }
-			});
-	*/					
+								
 			function refresh (){
 				$.get("feed_info.php", { 'user': <?php echo "'".base64_encode(json_encode($user))."'";?> }, function(data){
 					$('#infobox').html(data);
@@ -146,9 +129,7 @@
 		<div id="toggle">
 		
 		
-		
-		
-		<?php 
+<?php 
 		
 		foreach($mapResults as $map){
 			
@@ -189,7 +170,7 @@
 							makeGraph($post["bitly_link"]);
 						}
 					else
-						echo "Sorry No Posts have been Found."; 
+						echo "Sorry no posts have been Found."; 
 				?>
 				
 				</div>
@@ -202,76 +183,7 @@
 			
 			<?php
 		}
-		
-		
-		/*
-		 * 
-		 * ----------
-			$query = "SELECT * FROM networks WHERE user_id = ?";
-			$pdoStatement = sno_db_interface::executePreparedQueryN($query,array($user));
-			$networks = $pdoStatement->fetchAll();
-	
-
-			foreach($result as $feed){
-			?>
-				<p class="feed" align="left"><a href="<?php echo $feed["post_url"];?>"><?php echo $feed["post_id"];?></a><?php echo " ".$feed["publish_date"]; ?></p>
-				<div class="feed_details">	
-			<?php 
-				makeGraph($feed["bitly_link"]);
-				?>
-				
-				<!-- <p class="<?php echo ($feed["active_state"] ==1) ? 'toggle_active' : 'toggle_inactive'; ?>"  value="<?php echo base64_encode(json_encode(array($feed['active_state'], $feed['url'], $feed['network_id'])));?>" state="<?php echo $feed["active_state"];?>">
-					
-				<?php echo $feed["network_name"]; echo $feed["active_state"];?></p>-->
-					<?php foreach($networks as $network){
-							$query = "SELECT active_state FROM maps WHERE network_id = ? AND feed_url = ?";
-							$pdoStatement = sno_db_interface::executePreparedQueryN($query,array($network['network_id'],$feed['feed_url']));
-							$active_state = $pdoStatement->fetchAll();
- 							?>
- 							<p id="net_toggle" class="
- 							<?php echo ($active_state[0]['active_state'] ==1) ? 'toggle_active' : 'toggle_inactive'; ?>
- 							"  value="<?php echo base64_encode(json_encode(array( $feed['feed_url'], $network['network_id'])));?>"  state="<?php echo $active_state[0]['active_state'];?>" ><?php echo $network['network_name'];?></p>
-							<?php 
-					}
-					?>
-					</div>
-					
-					
-			<?php 
-			
-			
-			}
-			 * 
-			 * ----------------
-				*/
-				
-				
-				
-				
-				
-				
-				
-				
-/**				if(strcmp($bitly_url,$feed["bitly_link"])!=0)
-				{
-					if(strcmp($bitly_url,'-1')!=0){
-						echo "</div>";
-					}
-					$bitly_url = $feed['bitly_link'];
-					?>
-					<p class="feed" align="left"><a href="<?php echo $feed["post_url"];?>"><?php echo $feed["post_id"];?></a><?php echo " ".$feed["publish_date"]; ?></p>
-					<div class="feed_details">
-					<?php makeGraph($feed["bitly_link"]);?>
-					<p class="<?php echo ($feed["active_state"] ==1) ? 'toggle_active' : 'toggle_inactive'; ?>"  value="<?php echo base64_encode(json_encode(array($feed['active_state'], $feed['url'], $feed['network_id'])));?>" state="<?php echo $feed["active_state"];?>">
-					<?php echo $feed["network_name"]; echo $feed["active_state"];?></p>
-				<?php 	
-				}else{
-				?>
-						<p class="<?php echo ($feed["active_state"] ==1) ? 'toggle_active' : 'toggle_inactive'; ?>"  value="<?php echo base64_encode(json_encode(array($feed['active_state'], $feed['url'], $feed['network_id'])));?>" state="<?php echo $feed["active_state"];?>">
-						<?php echo $feed["network_name"]; echo $feed["active_state"];?></p>
-				<?php 
-				}
-			}**/?>
+?>
 
 		</div>
 			

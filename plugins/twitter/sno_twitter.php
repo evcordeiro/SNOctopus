@@ -1,7 +1,10 @@
 <?php
 require_once('config.php');
-require_once('../../lib/functions.php');
+//require_once('../../lib/functions.php');
 require_once('class-xhttp-php/class.xhttp.php');
+
+
+
 /* 
 * 
 * file: sno_twitter.php 
@@ -49,7 +52,9 @@ public function postToAPI($feed_data = NULL, $credentials = NULL){
 	
 	xhttp::load('profile,oauth');
 	$twitter = new xhttp_profile();
-	$twitter->oauth(CONSUMER_KEY, CONSUMER_SECRET);
+	$key ='87l3QJ3z5UYrGEI6njrekA';
+	$sec ='2wiFiQ79tjTBPVHC6mo6dDtIUhfPQDdfPYZTFOGg';
+	$twitter->oauth($key, $sec);
 	$twitter->oauth_method('get'); 
 
 	/*debug only*/
@@ -71,12 +76,15 @@ public function postToAPI($feed_data = NULL, $credentials = NULL){
 	}else{
 		$data['post']['status'] = $feed_data['title'];
 	}
-	
+		echo "posting to ".$network_label."'s twitter";
+		echo "<pre>";
+		print_r($data);
+		echo "</pre>";
 	
 	/* End parsing stuff */
 	
 	//post the data to Twitter
-	$response = $twitter->fetch('http://api.twitter.com/1/statuses/update.json', $data);
+	$response = $twitter->fetch('https://api.twitter.com/1/statuses/update.json', $data);
  
 	/*debug only*/
 	if($response['successful']) 
