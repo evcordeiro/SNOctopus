@@ -27,7 +27,7 @@ require_once("lib/functions.php");
 
 
 require_once 'lib/db/sno_db_interface.php';
-
+require_once 'bitly/sno_bitly.php';
 
  // GET ACTIVE MAPS AND NETWORK IDS
 $query = "SELECT * FROM maps
@@ -39,11 +39,16 @@ $activeFeeds = $pdoStatement->fetchAll();
 
 
 foreach($activeFeeds as $feed){
+	echo "<pre>";
+	print_r($feed);
+	echo "</pre>";
 	echo "</br></br>Feed: ". $feed['feed_url'];
+	echo "<BR>posting to ".$feed['network_label']."'s ".$feed['network_name']."<BR>";
 	// GET ALL POSTS 
 	$query = "SELECT publish_date FROM posts WHERE feed_url = ? and network_id = ?";
 	$pdoStatement = sno_db_interface::executePreparedQueryN($query,array($feed['feed_url'],$feed['network_id']));
 	$activeNetworks = $pdoStatement->fetchAll();	
+	
 	
 	
 	if(empty($activeNetworks)){
@@ -51,11 +56,10 @@ foreach($activeFeeds as $feed){
 		$query = "SELECT active_state from maps where feed_url = ? and network_id = ?";
 		$pdoStatement = sno_db_interface::executePreparedQueryN($query,array($feed['feed_url'],$feed['network_id']));
 		$activeMap = $pdoStatement->fetchAll();	
-		
 		if($activeMap[0]['active_state']){
 			//var_dump(unserialize(base64_decode($feed['credentials'])));
 			$creds = unserialize(base64_decode($feed['credentials']));
- 			parseFeed($feed['feed_url'], $feed['network_name'], $creds);// $feed['credentials']);	
+ 			parseFeed($feed['feed_url'], $feed['network_name'], $creds, $feed['network_id'],getPublishDate($feed['feed_url']));// $feed['credentials']);	
 		} 
 		// if parseFeed Successful then lets update the db			 		
 			
@@ -63,16 +67,25 @@ foreach($activeFeeds as $feed){
 		
 		$query = "SELECT active_state, publish_date from posts 
 					LEFT JOIN maps ON posts.feed_url = maps.feed_url and posts.network_id = maps.network_id
-					WHERE maps.feed_url = ? and maps.network_id = ? 
+					WHERE maps.feed_url = ? and maps.network_id = ? and STRCMP(posts.publish_date, ?)
 					ORDER BY publish_date DESC
 					";
-		$pdoStatement = sno_db_interface::executePreparedQueryN($query,array($feed['feed_url'],$feed['network_id']));
+		$query = "SELECT MAX(publish_date) as publish_date,post_id FROM posts 
+					WHERE feed_url = ?
+					GROUP BY feed_url, network_id";
+		$pdoStatement = sno_db_interface::executePreparedQueryN($query,array($feed['feed_url']));
 		$activeMap = $pdoStatement->fetchAll();	
+		
+				
 		//Check if most recent post in db matches is older then blog's post
+		echo "time1:".strtotime($activeMap[0]['publish_date'])."<BR>";
+		echo $feed['feed_url'];
+		echo "time2:".strtotime(getPublishDate($feed['feed_url']))."<BR>";
 		if(strtotime($activeMap[0]['publish_date']) < strtotime(getPublishDate($feed['feed_url']))){
-
-			if($activeMap[0]['active_state']){
-	 			parseFeed($feed['feed_url'], $feed['network_name'], null);//, $feed['credentials']);	
+			echo "loop";
+			if($feed['active_state'] == "1"){
+				echo "here";
+	 			parseFeed($feed['feed_url'], $feed['network_name'], null, $feed['network_id'],strtotime(getPublishDate($feed['feed_url'])));//, $feed['credentials']);	
 			}
 			// if parseFeed Successful then lets update the db			 		
 
@@ -90,8 +103,8 @@ function getPublishDate($feed){
 	return $sitemap->entry[0]->published;
 }
 
-function parseFeed($feed, $network, $credentials){
-echo "parsing";
+function parseFeed($feed, $network, $credentials, $network_id, $pub_date){
+	echo "parsing";
 	$xmlstr = file_get_contents($feed);
 	$sitemap = simplexml_load_string($xmlstr);
 
@@ -136,9 +149,15 @@ echo "parsing";
 		$information['timestamp'] = $sitemap->entry[$count]->published;
 		$information['blogTime'] =  $sitemap->updated;
 		$information['tags'] = $tags;
-		$information['bitlyURL'] = "http://sample.com";
+		$bitly = new Bitly();
+		$shortUrl = $bitly->shortenUrl($information['link']);	
+		echo "link: ".$information['link'];	
+		$information['bitlyURL'] = $shortUrl;
 		$information['bitlyHash'] = "xxxxxxxxxxxx";
-	
+		
+		echo "<BR>updating database<BR>";
+		$result = sno_db_interface::setNewPost($feed,$network_id,$pub_date,$information['bitlyURL']);			
+		echo "<br>database result: ".$result."<br>";
 		$network = strtolower($network);
 		$service_file = './plugins/'.$network.'/sno_'.$network.'.php';
 		
@@ -157,24 +176,7 @@ echo "parsing";
 			//service does not exist
 		}
 
-/*	foreach($list as $service ){
-		// only post to our services with the sno_prefix.
-		$service_file = './plugins/'.$service.'/sno_'.$service.'.php';
-		if(file_exists($service_file)){
-			require_once($service_file);
-			$obj = new $service;
-			
-			echo ("<br><b>Posting to: ". $service . "<br><b>Output:</b><br>");
-			$obj->postToAPI($information, $credentials);
-		}
-	}*/
-	
-	/*echo ("<a href='http://snoctop.us/index.php'>http://snoctop.us/index.php</a><br>");
-	echo ("<a href='http://tnorden.tumblr.com/'>http://tnorden.tumblr.com/</a><br>");
-	echo ("<a href='http://snoctopus.blogspot.com/2011/03/httpsno.html'>http://snoctopus.blogspot.com/2011/03/httpsno.html</a><br>");
-	echo ("<a href='http://twitter.com/search?q=snoctopus'>http://twitter.com/tom_norden</a><br>");
-	echo ("<a href='http://www.facebook.com/pages/SNOctopus/167168166665156?sk=wall'>http://www.facebook.com/pages/SNOctopus/167168166665156?sk=wall</a><br>");
-	*/
+
 }
 	//$count++;
 //}
