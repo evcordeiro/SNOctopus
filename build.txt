@@ -1,5 +1,10 @@
 Current build instructions (05/04/2011)
 
+Dependencies:
+    MySQL
+    Apache server (or similar)
+    PHP
+
 NOTE: If you do not have GIT set up already, use this link to get started: 
     http://help.github.com/linux-set-up-git/
 
@@ -9,6 +14,7 @@ NOTE: If you do not have GIT set up already, use this link to get started:
 3) Use the .sql script to create the empty database with tables needed for SNOctopus to run:
     In phpmyadmin: upload or copy the script contents to the SQL window, and execute the query.
     (You will have to set up user access to this database, in cPanel or in the script)
+    Command line example: mysql <database name> -u root -p < SNO_DB_CREATOR.sql
 4) Edit the database access file: lib/db/config.ini
     * You must change the user name, password, and anything else you changed to the appropriate settings.
     * Note: Lines starting with semi-colons are considered comments in .ini files.
