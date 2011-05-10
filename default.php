@@ -244,8 +244,6 @@
 				color:#000;
 			}
 			.tab_container td{
-				padding-left: 10px;
-				padding-right: 10px;
 				font-size:12px;
 				background-color:#92C4D1;
 				margin:5px;
@@ -255,7 +253,6 @@
                                 text-align:center;
                         }
                         .tab_container td.option {
-                                //padding: 0 20px;
                                 width:  50px;
                         }
 			.tab_container td.toggle_active{
