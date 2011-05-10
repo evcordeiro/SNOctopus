@@ -244,27 +244,24 @@
 				color:#000;
 			}
 			.tab_container td{
+			        text-align:center;
 				font-size:12px;
 				background-color:#92C4D1;
 				margin:5px;
 			}
                          .tab_container td.name {
-                                width:  70%;
-                                text-align:center;
+                                width:  60%;  
                         }
                         .tab_container td.option {
-                                width:  50px;
+                                width:  55px;
                         }
 			.tab_container td.toggle_active{
-				text-align:center;
 				background-color: #66FF66;				
 			}
 			.tab_container td.toggle_inactive{
-				text-align:center;
 				background-color: #CC9999;				
 			}
 
 .auto_margin {
     margin: 0 auto;
 }
-

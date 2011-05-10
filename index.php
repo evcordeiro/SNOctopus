@@ -97,20 +97,23 @@ if (!empty($_POST['username']) && isset($_GET['register']) ){
 
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:fb="http://www.facebook.com/2008/fbml">
 
-    <head>
+     <head>
         <title>Stuff is cool</title>
-        <link rel="stylesheet" href="default.php" type="text/css"> 
+      	<link rel="stylesheet" href="default.php" type="text/css"> 
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
-                <script src="http://code.jquery.com/jquery-git.js"></script>
-                <?php
-                                if ( $user->is_loaded() ){
-                  ?>
-        
-         <script type="text/javascript" src="js/functions.js"></script>
-                        <?php
-                                }
-                        ?>
-                        
+<?php
+    if ( $user->is_loaded() ){
+?>
+        <div id="fb-root"></div>
+
+	 <script src="http://platform.twitter.com/anywhere.js?id=<?php echo TWITTER_CONSUMER_KEY; ?>&v=1" type="text/javascript"></script>
+	 <script type="text/javascript" src="js/functions.js"></script>
+    	 <script type="text/javascript" src="plugins/facebook/js/facebook.php"></script>
+    	 <script type="text/javascript" src="plugins/twitter/js/twitter.php"></script>
+<?php
+     }
+?>
+			
     </head>
     <body>
         <div id="fb-root"></div>
@@ -205,7 +208,7 @@ if (!empty($_POST['username']) && isset($_GET['register']) ){
 
 <div class="tab_container">
     <div id="tab1" class="tab_content">
-        <table class='facebook'>
+        <table class='facebook auto_margin'>
             <tbody>
 <?php 
     if($facebook != NULL){
@@ -237,13 +240,13 @@ if (!empty($_POST['username']) && isset($_GET['register']) ){
 ?>
 </tbody>
 </table>
-<fb:login-button onclick="fbswitch()">Add another Facebook account</fb:login-button>
+<fb:login-button>Add another Facebook account</fb:login-button>
 
 </div>
 		<div id="tab2" class="tab_content">
 		<span id="twttr-anywhere-button"></span>
 		
-			<table class='twitter'><tbody>
+			<table class='twitter auto_margin'><tbody>
 <?php 
 if($twitter != NULL){
 foreach($twitter as $account){
